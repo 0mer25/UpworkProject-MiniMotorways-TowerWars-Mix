@@ -8,19 +8,28 @@ public class GridCell : MonoBehaviour
     [Header("Spawn Point")]
     public Transform spawnPoint; // Prefab'ın çıkacağı nokta (grid merkezinde biraz yukarıda olmalı)
 
-    private GameObject currentRoad;
-    private bool hasRoad = false;
+    public GameObject currentRoad;
 
     /// <summary>
     /// Hücreye yönüne göre düz veya viraj prefabı yerleştirir.
     /// </summary>
     public void PlaceRoad(GameObject prefab, Vector2Int direction)
     {
-        if (hasRoad) return;
+        if (HasRoad) return;
 
         Quaternion rotation = GetRotationFromDirection(direction);
         currentRoad = Instantiate(prefab, spawnPoint.position, rotation, transform);
-        hasRoad = true;
+
+        RoadCountManager.Instance.DecrementRoadCount(1);
+    }
+
+    public void PlaceRoad(GameObject prefab, Quaternion rotation)
+    {
+        if (HasRoad) return;
+
+        currentRoad = Instantiate(prefab, spawnPoint.position, rotation, transform);
+
+        RoadCountManager.Instance.DecrementRoadCount(1);
     }
 
     /// <summary>
@@ -32,14 +41,15 @@ public class GridCell : MonoBehaviour
         {
             Destroy(currentRoad);
             currentRoad = null;
+
+            RoadCountManager.Instance.IncrementRoadCount(1);
         }
-        hasRoad = false;
     }
 
     /// <summary>
     /// Hücrede yol var mı?
     /// </summary>
-    public bool HasRoad => hasRoad;
+    public bool HasRoad => currentRoad != null;
 
     /// <summary>
     /// Verilen yöne göre prefab'a uygun rotasyon döner.

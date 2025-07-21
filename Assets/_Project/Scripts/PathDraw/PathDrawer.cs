@@ -7,82 +7,146 @@ public class PathDrawer : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private GameObject straightRoadPrefab;
     [SerializeField] private GameObject cornerRoadPrefab;
+    [SerializeField] private LayerMask roadLayerMask;
+    [SerializeField] private LayerMask gridLayerMask;
 
     private List<GridCell> pathCells = new List<GridCell>();
     private GridCell lastCell = null;
     private bool isDrawing = false;
+    private bool isDeleting = false;
 
     void Update()
     {
-#if UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
-            isDrawing = true;
-            lastCell = null;
-            pathCells.Clear();
+            if (RoadCountManager.Instance.GetRoadCount() <= 0)
+            {
+                Debug.Log("No roads left to place.");
+                return;
+            }
+
+            Vector3 screenPos = Input.mousePosition;
+            Ray ray = cam.ScreenPointToRay(screenPos);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, gridLayerMask))
+            {
+                GridCell cell = hit.collider.GetComponent<GridCell>();
+
+                if (cell == null) return;
+
+                if (cell.HasRoad)
+                {
+                    isDrawing = true;
+                    lastCell = null;
+                    pathCells.Clear();
+                }
+                else
+                {
+                    isDeleting = true; // Set to delete mode if the cell already has a road
+                }
+            }
+            else
+            {
+                Debug.Log("No grid cell hit to start drawing.");
+            }
+
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             isDrawing = false;
             lastCell = null;
+            isDeleting = false;
         }
 
-        if (isDrawing)
+        if (isDeleting)
         {
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
 
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                GridCell currentCell = hit.collider.GetComponent<GridCell>();
+                GridCell cellToDelete = hit.collider.GetComponent<GridCell>();
+                Debug.Log("Hit cell: " + (cellToDelete != null ? cellToDelete.GridPosition.ToString() : "null"));
 
-                if (currentCell != null && !pathCells.Contains(currentCell))
+                if (cellToDelete != null)
                 {
-                    Vector2Int direction = Vector2Int.up;
-
-                    if (lastCell == null)
+                    Debug.Log("Attempting to delete road from cell at " + cellToDelete.GridPosition);
+                    if (cellToDelete.HasRoad && pathCells.Contains(cellToDelete))
                     {
-                        // İlk hücreye anında düz yol yerleştir
-                        currentCell.PlaceRoad(straightRoadPrefab, direction);
-                        pathCells.Add(currentCell);
-                        lastCell = currentCell;
-                        return;
+                        Debug.Log("Deleting road from cell at " + cellToDelete.GridPosition);
+                        cellToDelete.ClearRoad();
+                        pathCells.Remove(cellToDelete);
+                        lastCell = null;
                     }
+                }
+            }
+            else
+            {
+                Debug.Log("No grid cell hit for deletion.");
+            }
+        }
 
-                    direction = ClampDirection(currentCell.GridPosition - lastCell.GridPosition);
+        if (isDrawing)
+            {
+                Vector3 screenPos = Input.mousePosition;
+                Ray ray = cam.ScreenPointToRay(screenPos);
 
-                    // İkinci hücre geldiyse → ilk hücredeki düz yolun yönünü güncelle
-                    if (pathCells.Count == 1)
+                if (Physics.Raycast(ray, out RaycastHit hit))
+                {
+                    GridCell currentCell = hit.collider.GetComponent<GridCell>();
+
+                    if (currentCell != null && !pathCells.Contains(currentCell))
                     {
-                        lastCell.ClearRoad();
-                        lastCell.PlaceRoad(straightRoadPrefab, direction);
-                    }
+                        Vector2Int direction = Vector2Int.up;
 
-                    // Viraj kontrolü (her yeni hücrede bir önceki yönle karşılaştır)
-                    if (pathCells.Count >= 2)
-                    {
-                        GridCell prev = pathCells[pathCells.Count - 1];
-                        GridCell prevPrev = pathCells[pathCells.Count - 2];
+                        if (lastCell == null)
+                        {
+                            // İlk hücreye anında düz yol yerleştir
+                            currentCell.PlaceRoad(straightRoadPrefab, direction);
+                            pathCells.Add(currentCell);
+                            lastCell = currentCell;
+                            return;
+                        }
 
-                        Vector2Int fromPrevPrev = ClampDirection(prev.GridPosition - prevPrev.GridPosition);
-                        Vector2Int toCurrent = ClampDirection(currentCell.GridPosition - prev.GridPosition);
+                        direction = ClampDirection(currentCell.GridPosition - lastCell.GridPosition);
+
+                        // İkinci hücre geldiyse → ilk hücredeki düz yolun yönünü güncelle
+                        if (pathCells.Count == 1)
+                        {
+                            lastCell.ClearRoad();
+                            pathCells.Remove(lastCell);
+
+                            lastCell.PlaceRoad(straightRoadPrefab, direction);
+                            pathCells.Add(lastCell);
+                        }
+
+                        // Viraj kontrolü (her yeni hücrede bir önceki yönle karşılaştır)
+                        if (pathCells.Count >= 2)
+                        {
+                            GridCell prev = pathCells[pathCells.Count - 1];
+                            GridCell prevPrev = pathCells[pathCells.Count - 2];
+
+                            Vector2Int fromPrevPrev = ClampDirection(prev.GridPosition - prevPrev.GridPosition);
+                            Vector2Int toCurrent = ClampDirection(currentCell.GridPosition - prev.GridPosition);
 
                         if (fromPrevPrev != toCurrent)
                         {
                             prev.ClearRoad();
+                            pathCells.Remove(prev);
                             Quaternion rot = GetCornerRotation(fromPrevPrev, toCurrent);
-                            Instantiate(cornerRoadPrefab, prev.spawnPoint.position, rot, prev.transform);
-                        }
-                    }
 
-                    currentCell.PlaceRoad(straightRoadPrefab, direction);
-                    pathCells.Add(currentCell);
-                    lastCell = currentCell;
+                            prev.PlaceRoad(cornerRoadPrefab, rot);
+                            pathCells.Add(prev);
+                        }
+                        }
+
+                        currentCell.PlaceRoad(straightRoadPrefab, direction);
+                        pathCells.Add(currentCell);
+                        lastCell = currentCell;
+                    }
                 }
             }
-        }
-#endif
     }
 
     private Quaternion GetCornerRotation(Vector2Int from, Vector2Int to)
