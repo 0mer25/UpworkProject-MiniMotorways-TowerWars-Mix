@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class EventManager
 {
@@ -19,10 +20,15 @@ public static class EventManager
     }
 
 
+    public struct OnRoadPlaced : IEventType
+    {
+        public GridTile tile;
 
-
-
-
+        public OnRoadPlaced(GridTile tile)
+        {
+            this.tile = tile;
+        }
+    }
 
 
 
