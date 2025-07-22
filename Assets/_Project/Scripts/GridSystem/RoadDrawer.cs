@@ -11,6 +11,8 @@ public class RoadDrawer : MonoBehaviour
     private bool isDrawing = false;
     private bool isDeleting = false;
 
+    private List<GridTile> willDeleteTiles = new List<GridTile>();
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -42,6 +44,15 @@ public class RoadDrawer : MonoBehaviour
         {
             isDrawing = false;
             isDeleting = false;
+
+            if(willDeleteTiles.Count > 0)
+            {
+                foreach (var tile in willDeleteTiles)
+                {
+                    tile.ClearRoad();
+                }
+                willDeleteTiles.Clear();
+            }
         }
 
 
@@ -79,7 +90,8 @@ public class RoadDrawer : MonoBehaviour
 
                 if (tileToDelete != null && tileToDelete.HasRoad)
                 {
-                    tileToDelete.ClearRoad();
+                    willDeleteTiles.Add(tileToDelete);
+                    tileToDelete.SetForDeletion();
                 }
             }
         }

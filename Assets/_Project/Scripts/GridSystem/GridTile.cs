@@ -12,6 +12,12 @@ public class GridTile : MonoBehaviour
     [SerializeField] private GameObject obstaclePrefab;
     public bool HasRoad => currentRoad != null;
     public bool IsObstacle => obstaclePrefab != null;
+    private MeshRenderer meshRenderer;
+
+    void Awake()
+    {
+        meshRenderer = GetComponent<MeshRenderer>();
+    }
 
     void OnEnable()
     {
@@ -47,6 +53,11 @@ public class GridTile : MonoBehaviour
             EventManager.TriggerEvent(new EventManager.OnRoadPlaced(this));
         }
     }
+    
+    public void SetForDeletion()
+    {
+        meshRenderer.material.color = Color.red; // Change color to indicate deletion
+    }
 
     private void UpdateGfxAfterAnyPlacement(EventManager.OnRoadPlaced placed)
     {
@@ -54,7 +65,7 @@ public class GridTile : MonoBehaviour
 
         var isNearby = IsNearby(placed.tile);
 
-        if (isNearby ||placed.tile == this)
+        if (isNearby || placed.tile == this)
         {
             List<Vector2Int> connectedDirections = new List<Vector2Int>();
 
