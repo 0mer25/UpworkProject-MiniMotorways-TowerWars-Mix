@@ -53,6 +53,11 @@ public class RoadCountManager : MonoBehaviour
         return roadCount;
     }
 
+    public bool CanPlaceRoad()
+    {
+        return roadCount > 0;
+    }
+
     private void OnRoadCountChanged(EventManager.OnRoadCountChanged changed)
     {
         roadCountText.text = changed.newRoadCount.ToString();

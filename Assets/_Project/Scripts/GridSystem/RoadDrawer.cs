@@ -57,7 +57,7 @@ public class RoadDrawer : MonoBehaviour
 
 
 
-        if (isDrawing)
+        if (isDrawing && RoadCountManager.Instance.CanPlaceRoad())
         {
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
