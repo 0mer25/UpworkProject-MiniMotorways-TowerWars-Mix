@@ -1,7 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
 
-public class ShootingTower : MonoBehaviour
+public class ShootingTower : MonoBehaviour, IBuilding
 {
     [Header("Shooting Tower Settings")]
     [SerializeField] private float fireRate = 1.0f; // Time in seconds between shots
@@ -17,6 +17,12 @@ public class ShootingTower : MonoBehaviour
     [SerializeField] private Material neutralMaterial;
 
     private float nextFireTime = 0.0f; // Time when the tower can fire again
+
+
+    private int currentConnectionCount = 0; // Current number of connections
+    [SerializeField] private int MaxConnectionCount;
+    public bool CanConnect { get => currentConnectionCount < MaxConnectionCount; set => CanConnect = value; }
+
 
     private void Start()
     {

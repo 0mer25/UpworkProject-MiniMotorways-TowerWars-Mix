@@ -228,11 +228,12 @@ MonoBehaviour:
   range: 10
   projectilePrefab: {fileID: 1415513574387992975, guid: fe1fd2342d1aca046926c5d82fef2ff6, type: 3}
   projectileSpawnPoint: {fileID: 9204631628406546280}
-  team: 0
-  meshRenderer: {fileID: 0}
-  blueMaterial: {fileID: 0}
-  redMaterial: {fileID: 0}
-  neutralMaterial: {fileID: 0}
+  team: 2
+  meshRenderer: {fileID: 8610238150284273150}
+  blueMaterial: {fileID: 2100000, guid: ba6c6e9a0cfb4e14e8d3e7bab548bc2f, type: 2}
+  redMaterial: {fileID: 2100000, guid: f26c783c50c3a2543a92abbbbe5d83e2, type: 2}
+  neutralMaterial: {fileID: 2100000, guid: a89faf46e99ef454ab119ba62ad5c6df, type: 2}
+  MaxConnectionCount: 4
 --- !u!65 &8582393483736650579
 BoxCollider:
   m_ObjectHideFlags: 0

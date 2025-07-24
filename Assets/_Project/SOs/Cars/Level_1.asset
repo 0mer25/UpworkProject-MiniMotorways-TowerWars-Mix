@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac6aff8e44a17294c9e9c5d44d7942ac, type: 3}
   m_Name: Level_1
   m_EditorClassIdentifier: 
-  carPrefab: {fileID: 6927251474465227993, guid: 8a9b5b449ee10af4dbd6466c7750d05a, type: 3}
-  level: 1
-  speed: 4
+  carPrefab: {fileID: 8137885896484011762, guid: d384c35692ae25f45bdb4faaa0beca25, type: 3}
+  level: 0
+  speed: 1
