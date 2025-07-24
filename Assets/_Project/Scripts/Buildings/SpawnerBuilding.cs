@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class SpawnerBuilding : MonoBehaviour, IBuilding
+public class SpawnerBuilding : BaseBuilding, IBuilding
 {
     [SerializeField] private List<SpawnerBuildingData> spawnerData;
     [SerializeField] private List<int> levelLimits;
@@ -15,16 +15,17 @@ public class SpawnerBuilding : MonoBehaviour, IBuilding
     [SerializeField] private List<MeshRenderer> meshRenderers;
     [SerializeField] private TextMeshPro healthText;
 
-    public Team team;
+
 
 
     private int MaxConnectionCount => CurrentData.maxConnectionCount;
     private int level = -1;
     private int currentConnectionCount = 0;
     private SpawnerBuildingData CurrentData => spawnerData[level];
-
-
     private Material defaultMaterial;
+
+
+
 
     void Awake()
     {
@@ -49,19 +50,244 @@ public class SpawnerBuilding : MonoBehaviour, IBuilding
     {
         ChangeTeam(team);
         healthText.text = health.ToString();
-
         UpdateGfx(level);
+        UpdateTileLogic();
+        UpdateConnectionPoints();
 
-        // Start Spawning cars
+        // Ready to spawn cars or any further initialization
     }
 
-
-
-    private void SpawnCar(Transform spawnPoint)
+    private void UpdateConnectionPoints()
     {
-        var car = Instantiate(CurrentData.spawnPrefab, spawnPoint.position, Quaternion.identity);
-        // car.GetComponent<Car>().Initialize(startGrid, targetGrid, team);
+        _connectionTiles = new List<RoadTile>();
+
+        if (_centerGridRoad == null)
+        {
+            Debug.LogWarning("Center road tile not set.");
+            return;
+        }
+
+        Vector2Int center = _centerGridRoad.Tile.GridPosition;
+
+        int width = Mathf.RoundToInt(Dimensions.x);
+        int height = Mathf.RoundToInt(Dimensions.y);
+
+        int halfW = width / 2;
+        int halfH = height / 2;
+
+        // Four edge centers (relative to center)
+        Vector2Int right = center + new Vector2Int(halfW + 1, 0);
+        Vector2Int left = center + new Vector2Int(-halfW - 1, 0);
+        Vector2Int top = center + new Vector2Int(0, halfH + 1);
+        Vector2Int bottom = center + new Vector2Int(0, -halfH - 1);
+
+        TryAddConnectionTile(right);
+        TryAddConnectionTile(left);
+        TryAddConnectionTile(top);
+        TryAddConnectionTile(bottom);
     }
+
+    private void TryAddConnectionTile(Vector2Int pos)
+    {
+        var tile = RoadManager.Instance.GetTileByGridPosition(pos);
+        if (tile != null)
+        {
+            _connectionTiles.Add(tile);
+        }
+        else
+        {
+            Debug.Log($"Connection point not found or not a road at {pos}");
+        }
+    }
+
+    private void UpdateTileLogic()
+    {
+        var hits = Physics.OverlapSphere(transform.position, 0.2f);
+        GridTile centerGridTile = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent<GridTile>(out var tile))
+            {
+                float dist = Vector3.Distance(transform.position, tile.transform.position);
+                if (dist < closestDistance)
+                {
+                    closestDistance = dist;
+                    centerGridTile = tile;
+                }
+            }
+        }
+
+        if (centerGridTile == null)
+        {
+            Debug.LogWarning("No GridTile found near the building position.");
+            return;
+        }
+
+        // Set central RoadTile
+        _centerGridRoad = RoadManager.Instance.GetTileByGridPosition(centerGridTile.GridPosition);
+
+        // === Get all covered tiles based on Dimensions ===
+        List<RoadTile> occupiedTiles = new List<RoadTile>();
+        Vector2Int centerPos = centerGridTile.GridPosition;
+
+        int width = Mathf.RoundToInt(Dimensions.x);
+        int height = Mathf.RoundToInt(Dimensions.y);
+
+        int xOffset = width % 2 == 0 ? width / 2 - 1 : width / 2;
+        int yOffset = height % 2 == 0 ? height / 2 - 1 : height / 2;
+
+        for (int x = -xOffset; x <= xOffset + (width % 2 == 0 ? 1 : 0); x++)
+        {
+            for (int y = -yOffset; y <= yOffset + (height % 2 == 0 ? 1 : 0); y++)
+            {
+                Vector2Int pos = new Vector2Int(centerPos.x + x, centerPos.y + y);
+                RoadTile tile = RoadManager.Instance.GetTileByGridPosition(pos);
+                if (tile != null)
+                {
+                    occupiedTiles.Add(tile);
+                }
+                else
+                {
+                    Debug.LogWarning($"Missing RoadTile at position {pos}");
+                }
+            }
+        }
+
+        // === Assign tiles to this object ===
+        SetTiles(occupiedTiles);
+    }
+
+    public float spawnTime = 3.5f;
+
+    public float spawnTimer = 0f;
+
+    void Update()
+    {
+        spawnTimer += Time.deltaTime;
+
+        if (spawnTimer >= spawnTime)
+        {
+            spawnTimer = 0f;
+            TryToSpawnCars();
+        }
+    }
+
+    private void TryToSpawnCars()
+    {
+        /* if (currentConnectionCount <= 0)
+        {
+            Debug.Log("there are no connection to spawn");
+            return;
+        } */
+
+        foreach (var connectionTile in _connectionTiles)
+        {
+            if (connectionTile.State == GridObjType.Road)
+            {
+                for (int x = 7; x <= 15; x++)
+                {
+                    var tile = RoadManager.Instance.GetTileByGridPosition(new Vector2Int(x, 14));
+                    Debug.Log($"Tile {x},14 has state: {tile?.State}");
+                }
+
+                Debug.Log($"Connection tile at {connectionTile.Tile.GridPosition}, type = {connectionTile.State}");
+                var target = TryFindTarget(connectionTile);
+                if (target != null)
+                {
+                    Debug.Log("spawned card");
+                    SpawnCar(connectionTile, target);
+                }
+                else
+                {
+                    Debug.Log("connection has no path");
+                }
+            }
+
+        }
+
+    }
+
+
+    private void SpawnCar(RoadTile spawnTile, RoadTile targetTile)
+    {
+        var carGO = Instantiate(CurrentData.spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
+        var car = carGO.GetComponent<BaseCar>();
+        car.SpawnCar(this);
+        car.Initialize(spawnTile, targetTile, team);
+    }
+
+    public RoadTile TryFindTarget(RoadTile startTile)
+    {
+        RoadTile targetTile;
+
+        var enemyTeam = TeamExtensions.GetEnemyTeam(team);
+
+        targetTile = TrySetPathToReachableTarget(startTile, RoadManager.Instance.BuildingTiles(enemyTeam));
+        if (targetTile != null)
+        {
+            Debug.Log("Path found to enemy building.");
+            return targetTile;
+        }
+
+        targetTile = TrySetPathToReachableTarget(startTile, RoadManager.Instance.BuildingTiles(Team.Neutral));
+        if (targetTile != null)
+        {
+            Debug.Log("Path found to neutral building.");
+            return targetTile;
+        }
+
+        var ourTeamTiles = RoadManager.Instance.BuildingTiles(team)
+            .FindAll(t => t.GridObj != this); // ✅ filter out self
+
+        targetTile = TrySetPathToReachableTarget(startTile, ourTeamTiles);
+        if (targetTile != null)
+        {
+            Debug.Log("Path found to another teammate building.");
+            return targetTile;
+        }
+
+        Debug.Log("No reachable buildings found for any team.");
+        return null;
+    }
+
+
+    private RoadTile TrySetPathToReachableTarget(RoadTile startTile, List<RoadTile> targets)
+    {
+        if (targets == null || targets.Count == 0)
+            return null;
+
+        foreach (var target in targets)
+        {
+            var gridObj = target.GridObj;
+            if (gridObj == null)
+                continue;
+
+            // This cast assumes all targets are buildings with connection points
+            var building = gridObj as SpawnerBuilding; // Replace with actual class name
+
+            if (building == null || building.ConnectionTiles == null)
+                continue;
+
+            foreach (var connection in building.ConnectionTiles)
+            {
+                var path = RoadManager.Instance.ShortestRoadPath(startTile, connection);
+                if (path != null && path.Count > 0)
+                {
+                    Debug.Log($"Valid path from {startTile.Tile.GridPosition} to {connection.Tile.GridPosition} (building at {target.Tile.GridPosition})");
+                    return connection; // or return target if you want to track the building
+                }
+                else
+                {
+                    Debug.Log($"No path to building connection at {connection.Tile.GridPosition}");
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     private void ChangeTeam(Team newTeam)
     {
@@ -137,9 +363,11 @@ public class SpawnerBuilding : MonoBehaviour, IBuilding
     {
         if (other.TryGetComponent<BaseCar>(out BaseCar car))
         {
+            if (car.Spawner == this) return;
+
             CollisionWithCar(car.team);
             car.BlowUp();
         }
     }
-    
+
 }

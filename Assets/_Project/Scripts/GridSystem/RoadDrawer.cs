@@ -68,14 +68,14 @@ public class RoadDrawer : MonoBehaviour
 
                 Vector2Int direction = Vector2Int.up; // Default direction
 
-                if (currentTile.IsObstacle)
+                if (currentTile && currentTile.IsObstacle)
                 {
                     isDrawing = false;
                     return;
                 }
 
                 // Place the road prefab at the tile's position
-                currentTile.PlaceRoad(straightRoadPrefab, direction);
+                if (currentTile) currentTile.PlaceRoad(straightRoadPrefab, direction);
             }
         }
 

@@ -22,9 +22,13 @@ public class GridTile : MonoBehaviour
         meshRenderers = new List<MeshRenderer>();
     }
 
+    private RoadTile _roadTile;
+    public RoadTile MapRoad => _roadTile;
+
     void OnEnable()
     {
         EventManager.RegisterEvent<EventManager.OnRoadPlaced>(UpdateGfxAfterAnyPlacement);
+        _roadTile = RoadManager.Instance.AddTileToList(this);
     }
 
     void OnDisable()
