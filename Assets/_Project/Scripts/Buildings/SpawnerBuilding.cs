@@ -15,7 +15,8 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
     [SerializeField] private List<MeshRenderer> meshRenderers;
     [SerializeField] private TextMeshPro healthText;
 
-
+    public float spawnTime = 3.5f;
+    public float spawnTimer = 0f;
 
 
     private int MaxConnectionCount => CurrentData.maxConnectionCount;
@@ -23,8 +24,6 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
     private int currentConnectionCount = 0;
     private SpawnerBuildingData CurrentData => spawnerData[level];
     private Material defaultMaterial;
-
-
 
 
     void Awake()
@@ -44,6 +43,22 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
     void OnEnable()
     {
         SetForStart();
+    }
+
+    void Update()
+    {
+        if(team == Team.Neutral)
+        {
+            return; // No spawning for neutral team
+        }
+
+        spawnTimer += Time.deltaTime;
+
+        if (spawnTimer >= spawnTime)
+        {
+            spawnTimer = 0f;
+            TryToSpawnCars();
+        }
     }
 
     private void SetForStart()
@@ -85,6 +100,16 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
         TryAddConnectionTile(left);
         TryAddConnectionTile(top);
         TryAddConnectionTile(bottom);
+
+        Vector2Int topRight = center + new Vector2Int(halfW + 1, halfH + 1);
+        Vector2Int topLeft = center + new Vector2Int(-halfW - 1, halfH + 1);
+        Vector2Int bottomRight = center + new Vector2Int(halfW + 1, -halfH - 1);
+        Vector2Int bottomLeft = center + new Vector2Int(-halfW - 1, -halfH - 1);
+
+        TryAddBuildingEdgeTile(topRight);
+        TryAddBuildingEdgeTile(topLeft);
+        TryAddBuildingEdgeTile(bottomRight);
+        TryAddBuildingEdgeTile(bottomLeft);
     }
 
     private void TryAddConnectionTile(Vector2Int pos)
@@ -92,7 +117,22 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
         var tile = RoadManager.Instance.GetTileByGridPosition(pos);
         if (tile != null)
         {
+            tile.BaseBuildingObj = this;
             _connectionTiles.Add(tile);
+        }
+        else
+        {
+            Debug.Log($"Connection point not found or not a road at {pos}");
+        }
+    }
+
+    private void TryAddBuildingEdgeTile(Vector2Int pos)
+    {
+        var tile = RoadManager.Instance.GetTileByGridPosition(pos);
+
+        if (tile != null)
+        {
+            SetTile(tile);
         }
         else
         {
@@ -159,21 +199,20 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
         SetTiles(occupiedTiles);
     }
 
-    public float spawnTime = 3.5f;
-
-    public float spawnTimer = 0f;
-
-    void Update()
+    public override bool CanConnectToRoad()
     {
-        spawnTimer += Time.deltaTime;
-
-        if (spawnTimer >= spawnTime)
-        {
-            spawnTimer = 0f;
-            TryToSpawnCars();
-        }
+        return CanConnect;
     }
-
+    public override void AnyConnectionConnected()
+    {
+        base.AnyConnectionConnected();
+        currentConnectionCount++;
+    }
+    override public void AnyConnectionDisconnected()
+    {
+        base.AnyConnectionDisconnected();
+        currentConnectionCount--;
+    }
     private void TryToSpawnCars()
     {
         /* if (currentConnectionCount <= 0)
@@ -212,7 +251,9 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
 
     private void SpawnCar(RoadTile spawnTile, RoadTile targetTile)
     {
-        var carGO = Instantiate(CurrentData.spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
+        var teamIndex = team == Team.Blue ? 0 : team == Team.Red ? 1 : 2;
+        var spawnPrefab = carPrefabsHolder.GetCarPrefab(teamIndex, level);
+        var carGO = Instantiate(spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
         var car = carGO.GetComponent<BaseCar>();
         car.SpawnCar(this);
         car.Initialize(spawnTile, targetTile, team);

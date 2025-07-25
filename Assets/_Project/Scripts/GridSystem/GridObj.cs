@@ -35,8 +35,11 @@ public class RoadTile
 {
     public GridTile Tile;
     public GridObjType State = GridObjType.None;
-    public bool IsBusy => State != GridObjType.None;
+    public bool IsBusy => State == GridObjType.Obstacle || State == GridObjType.Building;
     public GridObj GridObj;
+    public BaseBuilding BaseBuildingObj;
+    public bool IsConnectionPoint => BaseBuildingObj != null;
+    public bool OutOfConnection => BaseBuildingObj.CanConnectToRoad();
 
     public RoadTile(GridTile gridTile)
     {
@@ -59,6 +62,21 @@ public class RoadTile
     {
         GridObj = obj;
         State = obj.ObjType;
+
+        if (State == GridObjType.Road)
+        {
+            BaseBuildingObj.AnyConnectionConnected();
+        }
+    }
+    public void ClearTileObj()
+    {
+        if(State == GridObjType.Road && BaseBuildingObj != null)
+        {
+            BaseBuildingObj.AnyConnectionDisconnected();
+        }
+
+        GridObj = null;
+        State = GridObjType.None;
     }
 }
 

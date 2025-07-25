@@ -8,4 +8,19 @@ public class BaseBuilding : GridObj
     public List<RoadTile> ConnectionTiles => _connectionTiles;
     public Team team;
     public Team BuildingTeam => team;
+
+    public virtual void AnyConnectionConnected()
+    {
+
+    }
+
+    public virtual void AnyConnectionDisconnected()
+    {
+
+    }
+
+    public virtual bool CanConnectToRoad()
+    {
+        return true;
+    }
 }

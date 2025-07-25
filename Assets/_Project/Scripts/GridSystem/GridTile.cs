@@ -54,6 +54,8 @@ public class GridTile : MonoBehaviour
     {
         if (currentRoad != null)
         {
+            _roadTile.ClearTileObj();
+
             Destroy(currentRoad);
             currentRoad = null;
 

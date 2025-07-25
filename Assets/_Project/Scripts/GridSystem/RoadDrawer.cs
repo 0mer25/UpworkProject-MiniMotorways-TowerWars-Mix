@@ -74,6 +74,12 @@ public class RoadDrawer : MonoBehaviour
                     return;
                 }
 
+                if(currentTile.MapRoad.IsBusy || currentTile.MapRoad.OutOfConnection)
+                {
+                    isDrawing = false;
+                    return;
+                }
+
                 // Place the road prefab at the tile's position
                 if (currentTile) currentTile.PlaceRoad(straightRoadPrefab, direction);
             }

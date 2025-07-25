@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7570076969284908503}
   - component: {fileID: 4746242226540828134}
   - component: {fileID: 959067216392591820}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Base_Building
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,6 +70,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17cc4f1e690ffb24f8952b685727ea9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObjType: 1
+  Dimensions: {x: 1, y: 1}
+  team: 2
   spawnerData:
   - {fileID: 11400000, guid: 92788a2dc5a66b849b023aabed25e7f7, type: 2}
   - {fileID: 11400000, guid: 7cc340438d7e0ce4db64685b0a84f8d1, type: 2}
@@ -84,7 +87,8 @@ MonoBehaviour:
   - {fileID: 5941746713161667076}
   - {fileID: 59037443328465917}
   healthText: {fileID: 8705318291323348404}
-  team: 2
+  spawnTime: 3.5
+  spawnTimer: 0
 --- !u!1 &579218539323597417
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,7 +100,7 @@ GameObject:
   - component: {fileID: 3246928608793563290}
   - component: {fileID: 2639004557975906617}
   - component: {fileID: 59037443328465917}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Building_Level_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +187,7 @@ GameObject:
   - component: {fileID: 531025296334744555}
   - component: {fileID: 1171370304704593260}
   - component: {fileID: 8346114361348783976}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Building_Level_1_Gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +272,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2668958585564310474}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Level_1_Gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +307,7 @@ GameObject:
   - component: {fileID: 4567336315028963724}
   - component: {fileID: 9052014578675386243}
   - component: {fileID: 2005634958198642633}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Base_Gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -389,7 +393,7 @@ GameObject:
   - component: {fileID: 3959005012512207854}
   - component: {fileID: 6886745066133225757}
   - component: {fileID: 5941746713161667076}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Building_Level_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,7 +479,7 @@ GameObject:
   m_Component:
   - component: {fileID: 615916456060462963}
   - component: {fileID: 5692578510982546605}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LevelTextParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -519,7 +523,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8018716677334624684}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 'Level_2_Gfx '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -552,7 +556,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2534327879283661930}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: 'Level_3_Gfx '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -587,7 +591,7 @@ GameObject:
   - component: {fileID: 7709807172840460110}
   - component: {fileID: 6853707586521453496}
   - component: {fileID: 6234493517234354995}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Base_Gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -673,7 +677,7 @@ GameObject:
   - component: {fileID: 2609831952288350821}
   - component: {fileID: 2798545726868964813}
   - component: {fileID: 8861070838759486058}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Base_Gfx
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -759,7 +763,7 @@ GameObject:
   - component: {fileID: 8099364169905328078}
   - component: {fileID: 3422846545172299645}
   - component: {fileID: 8705318291323348404}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
