@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: 1
   spawnPrefab: {fileID: 6927251474465227993, guid: 8a9b5b449ee10af4dbd6466c7750d05a, type: 3}
-  maxConnectionCount: 1
+  maxConnectionCount: 2

@@ -222,7 +222,9 @@ public class GridTile : MonoBehaviour
     }
     private void ReplaceWithStraightRoad(Quaternion rotation)
     {
+        _roadTile.ClearTileObj();
         Destroy(currentRoad);
+        
         currentRoad = Instantiate(straightRoadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), rotation, transform);
 
         // Update the mesh renderers after replacing the road

@@ -9,7 +9,7 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
     [SerializeField] private int health = 1;
     [SerializeField] private int startLevel = -1;
 
-    public bool CanConnect { get => currentConnectionCount < MaxConnectionCount; set => CanConnect = value; }
+    public bool CanConnect { get => currentConnectionCount <= MaxConnectionCount; set => CanConnect = value; }
     [SerializeField] private CarPrefabsHolder carPrefabsHolder;
     [SerializeField] private MaterialHolder materialHolder;
     [SerializeField] private List<MeshRenderer> meshRenderers;
@@ -22,7 +22,7 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
     private int MaxConnectionCount => CurrentData.maxConnectionCount;
     private int level = -1;
     private int currentConnectionCount = 0;
-    private SpawnerBuildingData CurrentData => spawnerData[level];
+    private SpawnerBuildingData CurrentData => spawnerData[level - 1];
     private Material defaultMaterial;
 
 
@@ -228,19 +228,12 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
                 for (int x = 7; x <= 15; x++)
                 {
                     var tile = RoadManager.Instance.GetTileByGridPosition(new Vector2Int(x, 14));
-                    Debug.Log($"Tile {x},14 has state: {tile?.State}");
                 }
 
-                Debug.Log($"Connection tile at {connectionTile.Tile.GridPosition}, type = {connectionTile.State}");
                 var target = TryFindTarget(connectionTile);
                 if (target != null)
                 {
-                    Debug.Log("spawned card");
                     SpawnCar(connectionTile, target);
-                }
-                else
-                {
-                    Debug.Log("connection has no path");
                 }
             }
 

@@ -39,7 +39,7 @@ public class RoadTile
     public GridObj GridObj;
     public BaseBuilding BaseBuildingObj;
     public bool IsConnectionPoint => BaseBuildingObj != null;
-    public bool OutOfConnection => BaseBuildingObj.CanConnectToRoad();
+    public bool OutOfConnection => IsOutOfConnection();
 
     public RoadTile(GridTile gridTile)
     {
@@ -63,21 +63,41 @@ public class RoadTile
         GridObj = obj;
         State = obj.ObjType;
 
-        if (State == GridObjType.Road)
+        if (State == GridObjType.Road && BaseBuildingObj != null)
         {
             BaseBuildingObj.AnyConnectionConnected();
         }
     }
     public void ClearTileObj()
     {
-        if(State == GridObjType.Road && BaseBuildingObj != null)
+        if (State == GridObjType.Road && BaseBuildingObj != null)
         {
+            Debug.Log("Clearing tile object and disconnecting from base building.");
             BaseBuildingObj.AnyConnectionDisconnected();
         }
 
         GridObj = null;
         State = GridObjType.None;
     }
+
+
+    private bool IsOutOfConnection()
+    {
+        if (BaseBuildingObj == null) return false;
+
+        if (BaseBuildingObj is SpawnerBuilding)
+        {
+            var spawner = BaseBuildingObj as SpawnerBuilding;
+            if (spawner == null) return false;
+
+            return !spawner.CanConnectToRoad();
+        }
+        else
+        {
+            return false;
+        }
+    }
+
 }
 
 public enum GridObjType
