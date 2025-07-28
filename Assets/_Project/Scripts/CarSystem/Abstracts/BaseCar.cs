@@ -26,6 +26,7 @@ public abstract class BaseCar : MonoBehaviour
     private bool _isMovementStarted = false;
     private bool _isMovingToNextTile = false;
     protected bool isBlowUp = false;
+    protected bool canDuplicate = true;
 
     void OnTriggerEnter(Collider other)
     {
@@ -38,19 +39,32 @@ public abstract class BaseCar : MonoBehaviour
             BlowUp();
         }
 
-        if(other.TryGetComponent<MultiplierGate>(out var gate))
+        if (other.TryGetComponent<MultiplierGate>(out var gate))
         {
-            for(int i = 0; i < gate.GetMultiplier(); i++)
+            if (canDuplicate)
             {
-                StartCoroutine(DuplicateForGate());
+                for (int i = 0; i < gate.GetMultiplier(); i++)
+                {
+                    StartCoroutine(DuplicateForGate());
+                }
             }
+            else
+            {
+                canDuplicate = true;
+            }
+
         }
+
     }
 
     private IEnumerator DuplicateForGate()
     {
         yield return new WaitForSeconds(0.2f);
-        Instantiate(gameObject, transform.position, transform.rotation);
+        GameObject carGO = Instantiate(gameObject, transform.position - transform.forward * 2f, transform.rotation);
+        BaseCar car = carGO.GetComponent<BaseCar>();
+        car.canDuplicate = false;
+        car.SpawnCar(spawner);
+        car.Initialize(_currentRoadTile, _roadMap[_roadMap.Count - 1], team, _currentTile + 1);
     }
 
     public virtual void SpawnCar(SpawnerBuilding spawnerBuilding)
@@ -122,7 +136,7 @@ public abstract class BaseCar : MonoBehaviour
 
     private void Update()
     {
-        if(isBlowUp) return;
+        if (isBlowUp) return;
 
         if (_isMovementStarted && !_isMovingToNextTile)
         {
