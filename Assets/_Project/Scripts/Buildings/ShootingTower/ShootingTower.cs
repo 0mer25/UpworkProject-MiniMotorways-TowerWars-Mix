@@ -1,5 +1,7 @@
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
+using System.Collections.Generic;
 
 public class ShootingTower : BaseBuilding, IBuilding
 {
@@ -8,6 +10,10 @@ public class ShootingTower : BaseBuilding, IBuilding
     [SerializeField] private float range = 10.0f; // Range of the shooting tower
     [SerializeField] private GameObject projectilePrefab; // Prefab for the projectile
     [SerializeField] private Transform projectileSpawnPoint; // Point where the projectile spawns
+    [SerializeField] private Transform rangeGfx;
+    [SerializeField] private int health = 1;
+    [SerializeField] private TextMeshPro healthText;
+    [SerializeField] private LayerMask carLayerMask; // Layer mask to filter car objects
 
     [Header("Team Settings")]
     [SerializeField] private MeshRenderer meshRenderer;
@@ -24,14 +30,27 @@ public class ShootingTower : BaseBuilding, IBuilding
 
     private void Start()
     {
-        // Initialize the tower's team and appearance
-        ChangeTeam(team);
+        SetForStart();
+    }
+
+    void OnValidate()
+    {
+        rangeGfx.localScale = new Vector3(range * 2, range * 2, 1);
     }
 
     void Update()
     {
+        
         // Find the closest target within range
-        Collider[] targets = Physics.OverlapSphere(transform.position, range);
+        Collider[] targets = Physics.OverlapSphere(transform.position, range, carLayerMask);
+
+        if (targets.Length == 0) return;
+
+        foreach (Collider target in targets)
+        {
+            Debug.Log($"Target found: {target.name}");
+        }
+
         Transform closestTarget = null;
         float closestDistance = Mathf.Infinity;
         foreach (Collider target in targets)
@@ -66,14 +85,13 @@ public class ShootingTower : BaseBuilding, IBuilding
         projectile.transform.LookAt(target);
         projectile.transform.DOMove(target.position, .15f).OnComplete(() =>
         {
-            Destroy(target.gameObject);
+            target.GetComponent<BaseCar>()?.BlowUp();
             DestroyBullet(projectile);
         });
     }
 
     private void DestroyBullet(GameObject bullet)
     {
-        // Optionally, you can add effects or sounds here before destroying the bullet
         Destroy(bullet);
     }
 
@@ -89,7 +107,173 @@ public class ShootingTower : BaseBuilding, IBuilding
         };
     }
 
-    
+    public void CollisionWithCar(Team team)
+    {
+        if (team == this.team)
+        {
+            health++;
+        }
+        else
+        {
+            if (health == 0)
+            {
+                ChangeTeam(team);
+                return;
+            }
+
+            health--;
+        }
+
+        healthText.text = health.ToString();
+    }
+
+
+    private void SetForStart()
+    {
+        ChangeTeam(team);
+        healthText.text = health.ToString();
+        UpdateTileLogic();
+        UpdateConnectionPoints();
+    }
+
+    private void UpdateTileLogic()
+    {
+        var hits = Physics.OverlapSphere(transform.position, 0.2f);
+        GridTile centerGridTile = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var hit in hits)
+        {
+            if (hit.TryGetComponent<GridTile>(out var tile))
+            {
+                float dist = Vector3.Distance(transform.position, tile.transform.position);
+                if (dist < closestDistance)
+                {
+                    closestDistance = dist;
+                    centerGridTile = tile;
+                }
+            }
+        }
+
+        if (centerGridTile == null)
+        {
+            Debug.LogWarning("No GridTile found near the building position.");
+            return;
+        }
+
+        // Set central RoadTile
+        _centerGridRoad = RoadManager.Instance.GetTileByGridPosition(centerGridTile.GridPosition);
+
+        // === Get all covered tiles based on Dimensions ===
+        List<RoadTile> occupiedTiles = new List<RoadTile>();
+        Vector2Int centerPos = centerGridTile.GridPosition;
+
+        int width = Mathf.RoundToInt(Dimensions.x);
+        int height = Mathf.RoundToInt(Dimensions.y);
+
+        int xOffset = width % 2 == 0 ? width / 2 - 1 : width / 2;
+        int yOffset = height % 2 == 0 ? height / 2 - 1 : height / 2;
+
+        for (int x = -xOffset; x <= xOffset + (width % 2 == 0 ? 1 : 0); x++)
+        {
+            for (int y = -yOffset; y <= yOffset + (height % 2 == 0 ? 1 : 0); y++)
+            {
+                Vector2Int pos = new Vector2Int(centerPos.x + x, centerPos.y + y);
+                RoadTile tile = RoadManager.Instance.GetTileByGridPosition(pos);
+                if (tile != null)
+                {
+                    occupiedTiles.Add(tile);
+                }
+                else
+                {
+                    Debug.LogWarning($"Missing RoadTile at position {pos}");
+                }
+            }
+        }
+
+        // === Assign tiles to this object ===
+        SetTiles(occupiedTiles);
+    }
+    private void UpdateConnectionPoints()
+    {
+        _connectionTiles = new List<RoadTile>();
+
+        if (_centerGridRoad == null)
+        {
+            Debug.LogWarning("Center road tile not set.");
+            return;
+        }
+
+        Vector2Int center = _centerGridRoad.Tile.GridPosition;
+
+        int width = Mathf.RoundToInt(Dimensions.x);
+        int height = Mathf.RoundToInt(Dimensions.y);
+
+        int halfW = width / 2;
+        int halfH = height / 2;
+
+        // Four edge centers (relative to center)
+        Vector2Int right = center + new Vector2Int(halfW + 1, 0);
+        Vector2Int left = center + new Vector2Int(-halfW - 1, 0);
+        Vector2Int top = center + new Vector2Int(0, halfH + 1);
+        Vector2Int bottom = center + new Vector2Int(0, -halfH - 1);
+
+        TryAddConnectionTile(right);
+        TryAddConnectionTile(left);
+        TryAddConnectionTile(top);
+        TryAddConnectionTile(bottom);
+
+        Vector2Int topRight = center + new Vector2Int(halfW + 1, halfH + 1);
+        Vector2Int topLeft = center + new Vector2Int(-halfW - 1, halfH + 1);
+        Vector2Int bottomRight = center + new Vector2Int(halfW + 1, -halfH - 1);
+        Vector2Int bottomLeft = center + new Vector2Int(-halfW - 1, -halfH - 1);
+
+        TryAddBuildingEdgeTile(topRight);
+        TryAddBuildingEdgeTile(topLeft);
+        TryAddBuildingEdgeTile(bottomRight);
+        TryAddBuildingEdgeTile(bottomLeft);
+    }
+    private void TryAddConnectionTile(Vector2Int pos)
+    {
+        var tile = RoadManager.Instance.GetTileByGridPosition(pos);
+        if (tile != null)
+        {
+            tile.BaseBuildingObj = this;
+            _connectionTiles.Add(tile);
+        }
+        else
+        {
+            Debug.Log($"Connection point not found or not a road at {pos}");
+        }
+    }
+
+    private void TryAddBuildingEdgeTile(Vector2Int pos)
+    {
+        var tile = RoadManager.Instance.GetTileByGridPosition(pos);
+
+        if (tile != null)
+        {
+            SetTile(tile);
+        }
+        else
+        {
+            Debug.Log($"Connection point not found or not a road at {pos}");
+        }
+    }
+    public override bool CanConnectToRoad()
+    {
+        return CanConnect;
+    }
+    public override void AnyConnectionConnected()
+    {
+        base.AnyConnectionConnected();
+        currentConnectionCount++;
+    }
+    override public void AnyConnectionDisconnected()
+    {
+        base.AnyConnectionDisconnected();
+        currentConnectionCount--;
+    }
 
     void OnDrawGizmos()
     {

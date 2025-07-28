@@ -215,12 +215,6 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
     }
     private void TryToSpawnCars()
     {
-        /* if (currentConnectionCount <= 0)
-        {
-            Debug.Log("there are no connection to spawn");
-            return;
-        } */
-
         foreach (var connectionTile in _connectionTiles)
         {
             if (connectionTile.State == GridObjType.Road)
@@ -261,14 +255,12 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
         targetTile = TrySetPathToReachableTarget(startTile, RoadManager.Instance.BuildingTiles(enemyTeam));
         if (targetTile != null)
         {
-            Debug.Log("Path found to enemy building.");
             return targetTile;
         }
 
         targetTile = TrySetPathToReachableTarget(startTile, RoadManager.Instance.BuildingTiles(Team.Neutral));
         if (targetTile != null)
         {
-            Debug.Log("Path found to neutral building.");
             return targetTile;
         }
 
@@ -278,11 +270,9 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
         targetTile = TrySetPathToReachableTarget(startTile, ourTeamTiles);
         if (targetTile != null)
         {
-            Debug.Log("Path found to another teammate building.");
             return targetTile;
         }
 
-        Debug.Log("No reachable buildings found for any team.");
         return null;
     }
 
@@ -309,12 +299,7 @@ public class SpawnerBuilding : BaseBuilding, IBuilding
                 var path = RoadManager.Instance.ShortestRoadPath(startTile, connection);
                 if (path != null && path.Count > 0)
                 {
-                    Debug.Log($"Valid path from {startTile.Tile.GridPosition} to {connection.Tile.GridPosition} (building at {target.Tile.GridPosition})");
                     return connection; // or return target if you want to track the building
-                }
-                else
-                {
-                    Debug.Log($"No path to building connection at {connection.Tile.GridPosition}");
                 }
             }
         }

@@ -13,7 +13,6 @@ public class BaseBuilding : GridObj
 
     public virtual void AnyConnectionConnected()
     {
-        Debug.Log("qwvyudbıqwdlqwd");
         FindFirstConnectionPointVisual(true).SetActive(true);
     }
 

@@ -74,7 +74,12 @@ public class RoadDrawer : MonoBehaviour
                     return;
                 }
 
-                if(currentTile.MapRoad.IsBusy || currentTile.MapRoad.OutOfConnection)
+                if (currentTile.MapRoad == null)
+                {
+                    return;
+                }
+
+                if (currentTile.MapRoad.IsBusy || currentTile.MapRoad.OutOfConnection)
                 {
                     Debug.Log("1- " + currentTile.MapRoad.IsBusy);
                     Debug.Log("2- " + currentTile.MapRoad.OutOfConnection);
