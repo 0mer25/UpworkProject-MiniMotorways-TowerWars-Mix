@@ -5,16 +5,29 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public abstract class BaseCar : MonoBehaviour
+public abstract class BaseCar : MonoBehaviour, IDamagable
 {
     [SerializeField] protected CarStatSO carStats;
     [SerializeField] private ParticleSystem blowUpParticlePrefab;
     [SerializeField] private ParticleSystem flameParticle;
     [SerializeField] private MeshRenderer carMeshRenderer;
     [SerializeField] private List<Transform> crashPoints;
+    [SerializeField] private float distanceThreshold = 0.1f;
+    [SerializeField] private float explosionDuration = 1.5f;
+    [SerializeField] private float randomPosRange = 3f;
 
-    public float explosionDuration = 1.5f;
-    public float randomPosRange = 3f;
+    public int Health { get => remainHealth; set => remainHealth = value; }
+    public int Damage { get => carStats.health; }
+    public void TakeDamage(int damage)
+    {
+        Health -= damage;
+        if (Health <= 0)
+        {
+            BlowUp();
+        }
+    }
+
+    private int remainHealth;
 
     protected NavMeshAgent agent;
     public Team team;
@@ -28,22 +41,29 @@ public abstract class BaseCar : MonoBehaviour
     protected bool isBlowUp = false;
     protected bool canDuplicate = true;
 
+    void OnEnable()
+    {
+        remainHealth = carStats.health;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<BaseCar>(out var car))
         {
             if (isBlowUp) return;
-            if (car.team != TeamExtensions.GetEnemyTeam(team)) return;
+            if (car.team == team) return;
 
-            car.BlowUp();
-            BlowUp();
+            if (GetInstanceID() > car.GetInstanceID()) return;
+
+            car.TakeDamage(Damage);
+            TakeDamage(car.Damage);
         }
 
         if (other.TryGetComponent<MultiplierGate>(out var gate))
         {
             if (canDuplicate)
             {
-                for (int i = 0; i < gate.GetMultiplier(); i++)
+                for (int i = 0; i < gate.GetMultiplier() - 1; i++)
                 {
                     StartCoroutine(DuplicateForGate());
                 }
@@ -54,7 +74,6 @@ public abstract class BaseCar : MonoBehaviour
             }
 
         }
-
     }
 
     private IEnumerator DuplicateForGate()
@@ -64,7 +83,7 @@ public abstract class BaseCar : MonoBehaviour
         BaseCar car = carGO.GetComponent<BaseCar>();
         car.canDuplicate = false;
         car.SpawnCar(spawner);
-        car.Initialize(_currentRoadTile, _roadMap[_roadMap.Count - 1], team, _currentTile + 1);
+        car.Initialize(_currentRoadTile, _roadMap[_roadMap.Count - 1], team, 0);
     }
 
     public virtual void SpawnCar(SpawnerBuilding spawnerBuilding)
@@ -138,12 +157,17 @@ public abstract class BaseCar : MonoBehaviour
     {
         if (isBlowUp) return;
 
+        if(agent == null || !_isMovementStarted)
+        {
+            return;
+        }
+
         if (_isMovementStarted && !_isMovingToNextTile)
         {
             MoveToNextTile();
         }
 
-        if (_isMovingToNextTile && agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
+        if (_isMovingToNextTile && agent.remainingDistance <= (agent.stoppingDistance + distanceThreshold) && !agent.pathPending)
         {
             ArriveAtTile();
         }
@@ -155,7 +179,6 @@ public abstract class BaseCar : MonoBehaviour
         _currentTile++;
         _isMovingToNextTile = false;
     }
-
 
     private void MoveToNextTile()
     {
@@ -171,14 +194,12 @@ public abstract class BaseCar : MonoBehaviour
         agent.SetDestination(nextTile.Tile.transform.position);
     }
 
-
     private void StartMovement(int startTileIndex = 0)
     {
         _isMovementStarted = true;
         _currentTile = startTileIndex;
         _isMovingToNextTile = false;
     }
-
 
     private void SetTarget(RoadTile targetTile, int startTileIndex = 0)
     {
@@ -195,5 +216,9 @@ public abstract class BaseCar : MonoBehaviour
             }
         }
         StartMovement(startTileIndex);
+    }
+    public void DestroyForTowerCollision()
+    {
+        Destroy(gameObject);
     }
 }

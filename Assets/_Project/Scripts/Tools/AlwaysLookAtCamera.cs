@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AlwaysLookAtCamera : MonoBehaviour
 {
-    private void OnEnable()
+    void LateUpdate()
     {
         LookAtCamera();
     }

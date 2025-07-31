@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Level_2
   m_EditorClassIdentifier: 
   carPrefab: {fileID: 6927251474465227993, guid: 8a9b5b449ee10af4dbd6466c7750d05a, type: 3}
-  level: 1
+  level: 2
   speed: 2
+  health: 2

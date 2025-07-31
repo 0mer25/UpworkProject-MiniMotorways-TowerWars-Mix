@@ -24,6 +24,7 @@ public class GridTile : MonoBehaviour
 
     private RoadTile _roadTile;
     public RoadTile MapRoad => _roadTile;
+    public bool IsConnectionTile => _roadTile != null ? _roadTile.IsConnectionPoint : false;
 
     void OnEnable()
     {

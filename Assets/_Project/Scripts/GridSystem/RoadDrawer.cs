@@ -10,6 +10,7 @@ public class RoadDrawer : MonoBehaviour
 
     private bool isDrawing = false;
     private bool isDeleting = false;
+    private bool waitForNextTile = false;
 
     private List<GridTile> willDeleteTiles = new List<GridTile>();
 
@@ -17,6 +18,7 @@ public class RoadDrawer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
 
@@ -26,7 +28,7 @@ public class RoadDrawer : MonoBehaviour
 
                 if (tile == null) return;
 
-                if (!tile.HasRoad)
+                if (!tile.HasRoad && !tile.IsConnectionTile)
                 {
                     isDeleting = true;
                     return;
@@ -62,7 +64,7 @@ public class RoadDrawer : MonoBehaviour
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, gridLayerMask))
             {
                 GridTile currentTile = hit.collider.GetComponent<GridTile>();
 
@@ -81,14 +83,16 @@ public class RoadDrawer : MonoBehaviour
 
                 if (currentTile.MapRoad.IsBusy || currentTile.MapRoad.OutOfConnection)
                 {
-                    Debug.Log("1- " + currentTile.MapRoad.IsBusy);
-                    Debug.Log("2- " + currentTile.MapRoad.OutOfConnection);
-                    isDrawing = false;
+                    waitForNextTile = true;
                     return;
+                }
+                else
+                {
+                    waitForNextTile = false;
                 }
 
                 // Place the road prefab at the tile's position
-                if (currentTile) currentTile.PlaceRoad(straightRoadPrefab, direction);
+                if (currentTile && !waitForNextTile) currentTile.PlaceRoad(straightRoadPrefab, direction);
             }
         }
 
@@ -97,7 +101,7 @@ public class RoadDrawer : MonoBehaviour
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
 
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, gridLayerMask))
             {
                 GridTile tileToDelete = hit.collider.GetComponent<GridTile>();
 

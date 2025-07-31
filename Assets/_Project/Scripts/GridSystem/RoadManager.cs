@@ -12,6 +12,8 @@ public class RoadManager : MonoBehaviour
         }
     }
     public static RoadManager _instance;
+    [SerializeField] private Vector2Int xBounds;
+    [SerializeField] private Vector2Int yBounds;
 
     private List<RoadTile> _mapTiles;
 
@@ -216,4 +218,89 @@ public class RoadManager : MonoBehaviour
         return _mapTiles.FindAll(x => x.State == gridObjType);
     }
 
+    // Find Empty 3x3 matrix
+    
+    public Vector2Int? Find3x3EmptyArea()
+    {
+        Vector2Int minBounds = new Vector2Int(xBounds.x, yBounds.x);
+        Vector2Int maxBounds = new Vector2Int(xBounds.y, yBounds.y);
+
+        // Sınırları kontrol et - 3x3 alan için yeterli yer var mı?
+        if (maxBounds.x - minBounds.x < 2 || maxBounds.y - minBounds.y < 2)
+        {
+            Debug.LogWarning("Verilen sınırlar 3x3 alan için çok küçük!");
+            return null;
+        }
+
+        // Her pozisyonu kontrol et (3x3 alan için son 2 satır/sütunu kontrol etmeyiz)
+        for (int x = minBounds.x; x <= maxBounds.x - 2; x++)
+        {
+            for (int y = minBounds.y; y <= maxBounds.y - 2; y++)
+            {
+                Vector2Int startPos = new Vector2Int(x, y);
+
+                if (Is3x3AreaEmpty(startPos))
+                {
+                    // 3x3 alanın ortasındaki tile'ın pozisyonunu döndür
+                    Vector2Int centerPos = new Vector2Int(x + 1, y + 1);
+                    return centerPos;
+                }
+            }
+        }
+
+        return null; // Boş 3x3 alan bulunamadı
+    }
+
+    private bool Is3x3AreaEmpty(Vector2Int startPos)
+    {
+        // 3x3 alandaki tüm tile'ları kontrol et
+        for (int x = 0; x < 3; x++)
+        {
+            for (int y = 0; y < 3; y++)
+            {
+                Vector2Int checkPos = startPos + new Vector2Int(x, y);
+                RoadTile tile = GetTileByGridPosition(checkPos);
+
+                // Tile yoksa veya boş değilse false döndür
+                if (tile == null || tile.State != GridObjType.None)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true; // Tüm tile'lar boş
+    }
+
+    // Alternatif: Birden fazla 3x3 boş alanın merkezlerini bulmak istersen
+    public List<Vector2Int> FindAll3x3EmptyAreaCenters()
+    {
+        Vector2Int minBounds = new Vector2Int(xBounds.x, yBounds.x);
+        Vector2Int maxBounds = new Vector2Int(xBounds.y, yBounds.y);
+
+        List<Vector2Int> centerPositions = new List<Vector2Int>();
+
+        if (maxBounds.x - minBounds.x < 2 || maxBounds.y - minBounds.y < 2)
+        {
+            Debug.LogWarning("Verilen sınırlar 3x3 alan için çok küçük!");
+            return centerPositions;
+        }
+
+        for (int x = minBounds.x; x <= maxBounds.x - 2; x++)
+        {
+            for (int y = minBounds.y; y <= maxBounds.y - 2; y++)
+            {
+                Vector2Int startPos = new Vector2Int(x, y);
+
+                if (Is3x3AreaEmpty(startPos))
+                {
+                    // 3x3 alanın ortasındaki tile'ın pozisyonunu ekle
+                    Vector2Int centerPos = new Vector2Int(x + 1, y + 1);
+                    centerPositions.Add(centerPos);
+                }
+            }
+        }
+
+        return centerPositions;
+    }
 }
