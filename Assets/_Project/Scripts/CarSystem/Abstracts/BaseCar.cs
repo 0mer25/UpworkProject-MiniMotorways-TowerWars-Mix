@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,7 +12,6 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     [SerializeField] private MeshRenderer carMeshRenderer;
     [SerializeField] private List<Transform> crashPoints;
     [SerializeField] private float distanceThreshold = 0.1f;
-    [SerializeField] private float explosionDuration = 1.5f;
     [SerializeField] private float randomPosRange = 3f;
 
     public int Health { get => remainHealth; set => remainHealth = value; }

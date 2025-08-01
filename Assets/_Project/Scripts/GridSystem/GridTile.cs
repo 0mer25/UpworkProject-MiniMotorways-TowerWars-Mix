@@ -16,6 +16,7 @@ public class GridTile : MonoBehaviour
     public bool HasRoad => currentRoad != null;
     public bool IsObstacle => obstaclePrefab != null;
     private List<MeshRenderer> meshRenderers;
+    public GameObject RoadObject => currentRoad;
 
     void Awake()
     {
@@ -29,6 +30,7 @@ public class GridTile : MonoBehaviour
     void OnEnable()
     {
         EventManager.RegisterEvent<EventManager.OnRoadPlaced>(UpdateGfxAfterAnyPlacement);
+        
         _roadTile = RoadManager.Instance.AddTileToList(this);
     }
 
@@ -60,6 +62,8 @@ public class GridTile : MonoBehaviour
             Destroy(currentRoad);
             currentRoad = null;
 
+            meshRenderers.Clear();
+
             RoadCountManager.Instance.IncrementRoadCount(1);
 
             EventManager.TriggerEvent(new EventManager.OnRoadPlaced(this));
@@ -86,7 +90,7 @@ public class GridTile : MonoBehaviour
 
         if (isNearby || placed.tile == this)
         {
-
+            Debug.Log("Updating road graphics for tile: " + GridPosition);
             meshRenderers.Clear();
             List<Vector2Int> connectedDirections = new List<Vector2Int>();
 
@@ -103,12 +107,16 @@ public class GridTile : MonoBehaviour
                 Vector2Int neighborPos = GridPosition + dir;
                 if (GridTileRegistry.Instance.TryGetTileAt(neighborPos, out GridTile neighborTile))
                 {
+                    Debug.Log("Checking neighbor tile at " + neighborPos + " for road connection.");
                     if (neighborTile.HasRoad)
                     {
+                        Debug.Log("Found connected road in direction: " + dir);
                         connectedDirections.Add(dir);
                     }
                 }
             }
+
+            Debug.Log("Connected directions for tile " + GridPosition + ": " + string.Join(", ", connectedDirections.Count));
 
             if (connectedDirections.Count == 2)
             {
@@ -118,15 +126,18 @@ public class GridTile : MonoBehaviour
                 // Eğer düz değilse, viraj demektir (örnek: up+right)
                 if (dirA != -dirB)
                 {
+                    Debug.Log("Replacing with corner road for directions: " + dirA + " and " + dirB);
                     ReplaceWithCornerRoad(GetCornerRotation(dirA, dirB));
                 }
                 else
                 {
+                    Debug.Log("Replacing with straight road for direction: " + dirA);
                     ReplaceWithStraightRoad(GetStraightRotation(dirA));
                 }
             }
             else if (connectedDirections.Count == 1)
             {
+                Debug.Log("Replacing with straight road for single direction: " + connectedDirections[0]);
                 ReplaceWithStraightRoad(GetStraightRotation(connectedDirections[0]));
             }
             else if (connectedDirections.Count == 3)
@@ -137,6 +148,7 @@ public class GridTile : MonoBehaviour
                 {
                     if (!connectedDirections.Contains(dir))
                     {
+                        Debug.Log("Replacing with three-way road for direction: " + dir);
                         ReplaceWithThreeWayRoad(GetThreeWayRotation(dir));
                         break;
                     }
@@ -144,6 +156,7 @@ public class GridTile : MonoBehaviour
             }
             else if (connectedDirections.Count == 4)
             {
+                Debug.Log("Replacing with four-way road");
                 ReplaceWithFourWayRoad(Quaternion.identity);
             }
 
@@ -215,6 +228,7 @@ public class GridTile : MonoBehaviour
 
     private void ReplaceWithCornerRoad(Quaternion rotation)
     {
+        meshRenderers.Clear();
         Destroy(currentRoad);
         currentRoad = Instantiate(cornerRoadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), rotation, transform);
 
@@ -223,6 +237,7 @@ public class GridTile : MonoBehaviour
     }
     private void ReplaceWithStraightRoad(Quaternion rotation)
     {
+        meshRenderers.Clear();
         _roadTile.ClearTileObj();
         Destroy(currentRoad);
         
@@ -234,6 +249,7 @@ public class GridTile : MonoBehaviour
 
     private void ReplaceWithThreeWayRoad(Quaternion rotation)
     {
+        meshRenderers.Clear();
         Destroy(currentRoad);
         currentRoad = Instantiate(threeWayRoadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), rotation, transform);
 
@@ -242,6 +258,7 @@ public class GridTile : MonoBehaviour
     }
     private void ReplaceWithFourWayRoad(Quaternion rotation)
     {
+        meshRenderers.Clear();
         Destroy(currentRoad);
         currentRoad = Instantiate(fourWayRoadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), rotation, transform);
 

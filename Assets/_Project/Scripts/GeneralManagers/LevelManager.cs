@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class LevelManager : MonoBehaviour
 {
@@ -43,12 +44,24 @@ public class LevelManager : MonoBehaviour
 
     public void InitializeLevel()
     {
-        currentLevel = levels[PlayerPrefs.GetInt("LevelIndex", 0)];
+        EventManager.TriggerEvent(new EventManager.OnLevelLoading(currentLevel));
+
+        currentLevel = Instantiate(levels[PlayerPrefs.GetInt("LevelIndex", 0)], Vector3.zero, Quaternion.identity);
+
+        EventManager.TriggerEvent(new EventManager.OnLevelLoaded(currentLevel));
     }
 
     public void ResetLevel()
     {
-        Debug.Log("Level Reset");
+        currentLevel.transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+        {
+            Destroy(currentLevel.gameObject);
+            currentLevel = null;
+        });
+        DOVirtual.DelayedCall(0.55f, () =>
+        {
+            InitializeLevel();
+        });
     }
 
     public void NextLevel()

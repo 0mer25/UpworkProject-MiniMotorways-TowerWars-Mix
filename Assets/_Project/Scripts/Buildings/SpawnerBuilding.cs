@@ -103,6 +103,12 @@ public class SpawnerBuilding : BaseBuilding
             // This cast assumes all targets are buildings with connection points
             var building = gridObj as BaseBuilding; // Replace with actual class name
 
+            if(gridObj is SpawnerBuilding spawner)
+            {
+                if (spawner.team == team && Health < spawner.Health)
+                    continue;
+            }
+
             if (building == null || building.ConnectionTiles == null)
                 continue;
 

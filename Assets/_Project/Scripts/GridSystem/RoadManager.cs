@@ -26,6 +26,22 @@ public class RoadManager : MonoBehaviour
         }
 
         _instance = this;
+
+        _mapTiles = new List<RoadTile>();
+    }
+
+    void OnEnable()
+    {
+        EventManager.RegisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
+    }
+    void OnDisable()
+    {
+        EventManager.DeregisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
+    }
+
+    private void OnLevelLoading(EventManager.OnLevelLoading loading)
+    {
+        _mapTiles.Clear();
     }
 
     public RoadTile AddTileToList(GridTile gridTile)

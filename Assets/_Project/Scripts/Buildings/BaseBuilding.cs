@@ -9,6 +9,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
     [SerializeField] private int startLevel = -1;
 
     public bool CanConnect { get => currentConnectionCount <= level; set => CanConnect = value; }
+    public int Health => health;
     [SerializeField] private MaterialHolder materialHolder;
     [SerializeField] private List<MeshRenderer> meshRenderers;
     [SerializeField] private TextMeshPro healthText;
@@ -40,7 +41,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
         defaultMaterial = meshRenderers[0].materials[0];
     }
 
-    void OnEnable()
+    void Start()
     {
         SetForStart();
     }
@@ -52,6 +53,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
         UpdateGfx(level);
         UpdateTileLogic();
         UpdateConnectionPoints();
+        Debug.Log("BaseBuilding enabled and initialized.");
     }
 
     private void UpdateConnectionPoints()

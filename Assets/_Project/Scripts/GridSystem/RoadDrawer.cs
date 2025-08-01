@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,23 @@ public class RoadDrawer : MonoBehaviour
     private bool waitForNextTile = false;
 
     private List<GridTile> willDeleteTiles = new List<GridTile>();
+
+    void OnEnable()
+    {
+        EventManager.RegisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
+    }
+    void OnDisable()
+    {
+        EventManager.DeregisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
+    }
+
+    private void OnLevelLoading(EventManager.OnLevelLoading loaded)
+    {
+        willDeleteTiles.Clear(); // Clear any tiles marked for deletion
+        isDrawing = false;
+        isDeleting = false;
+        waitForNextTile = false;
+    }
 
     void Update()
     {
@@ -105,7 +123,7 @@ public class RoadDrawer : MonoBehaviour
             {
                 GridTile tileToDelete = hit.collider.GetComponent<GridTile>();
 
-                if (tileToDelete != null && tileToDelete.HasRoad)
+                if (tileToDelete != null && tileToDelete.HasRoad && !willDeleteTiles.Contains(tileToDelete))
                 {
                     willDeleteTiles.Add(tileToDelete);
                     tileToDelete.SetForDeletion();

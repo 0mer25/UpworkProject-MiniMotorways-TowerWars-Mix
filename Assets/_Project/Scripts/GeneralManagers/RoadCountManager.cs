@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -14,12 +15,18 @@ public class RoadCountManager : MonoBehaviour
     void OnEnable()
     {
         EventManager.RegisterEvent<EventManager.OnRoadCountChanged>(OnRoadCountChanged);
-        SetRoadCount(roadCount); // Initialize road count text
+        EventManager.RegisterEvent<EventManager.OnLevelLoaded>(OnLevelLoaded);
     }
 
     void OnDisable()
     {
         EventManager.DeregisterEvent<EventManager.OnRoadCountChanged>(OnRoadCountChanged);
+        EventManager.DeregisterEvent<EventManager.OnLevelLoaded>(OnLevelLoaded);
+    }
+
+    private void OnLevelLoaded(EventManager.OnLevelLoaded loaded)
+    {
+        SetRoadCount(loaded.level.totalRoadTiles); // Initialize road count text
     }
 
     public void IncrementRoadCount(int count)

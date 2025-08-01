@@ -26,12 +26,31 @@ public static class EventManager
 
         public OnRoadPlaced(GridTile tile)
         {
+            Debug.Log("Road placed on tile: " + tile.GridPosition);
             this.tile = tile;
         }
     }
 
 
+    public struct OnLevelLoaded : IEventType
+    {
+        public BaseLevel level;
 
+        public OnLevelLoaded(BaseLevel level)
+        {
+            this.level = level;
+        }
+    }
+
+    public struct OnLevelLoading : IEventType
+    {
+        public BaseLevel level;
+
+        public OnLevelLoading(BaseLevel level)
+        {
+            this.level = level;
+        }
+    }
 
 
 
