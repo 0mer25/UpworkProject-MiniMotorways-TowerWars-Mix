@@ -90,7 +90,6 @@ public class GridTile : MonoBehaviour
 
         if (isNearby || placed.tile == this)
         {
-            Debug.Log("Updating road graphics for tile: " + GridPosition);
             meshRenderers.Clear();
             List<Vector2Int> connectedDirections = new List<Vector2Int>();
 
@@ -107,16 +106,12 @@ public class GridTile : MonoBehaviour
                 Vector2Int neighborPos = GridPosition + dir;
                 if (GridTileRegistry.Instance.TryGetTileAt(neighborPos, out GridTile neighborTile))
                 {
-                    Debug.Log("Checking neighbor tile at " + neighborPos + " for road connection.");
                     if (neighborTile.HasRoad)
                     {
-                        Debug.Log("Found connected road in direction: " + dir);
                         connectedDirections.Add(dir);
                     }
                 }
             }
-
-            Debug.Log("Connected directions for tile " + GridPosition + ": " + string.Join(", ", connectedDirections.Count));
 
             if (connectedDirections.Count == 2)
             {
@@ -126,18 +121,15 @@ public class GridTile : MonoBehaviour
                 // Eğer düz değilse, viraj demektir (örnek: up+right)
                 if (dirA != -dirB)
                 {
-                    Debug.Log("Replacing with corner road for directions: " + dirA + " and " + dirB);
                     ReplaceWithCornerRoad(GetCornerRotation(dirA, dirB));
                 }
                 else
                 {
-                    Debug.Log("Replacing with straight road for direction: " + dirA);
                     ReplaceWithStraightRoad(GetStraightRotation(dirA));
                 }
             }
             else if (connectedDirections.Count == 1)
             {
-                Debug.Log("Replacing with straight road for single direction: " + connectedDirections[0]);
                 ReplaceWithStraightRoad(GetStraightRotation(connectedDirections[0]));
             }
             else if (connectedDirections.Count == 3)
@@ -148,7 +140,6 @@ public class GridTile : MonoBehaviour
                 {
                     if (!connectedDirections.Contains(dir))
                     {
-                        Debug.Log("Replacing with three-way road for direction: " + dir);
                         ReplaceWithThreeWayRoad(GetThreeWayRotation(dir));
                         break;
                     }
@@ -156,11 +147,8 @@ public class GridTile : MonoBehaviour
             }
             else if (connectedDirections.Count == 4)
             {
-                Debug.Log("Replacing with four-way road");
                 ReplaceWithFourWayRoad(Quaternion.identity);
             }
-
-            //meshRenderers = GetComponentsInChildren<MeshRenderer>().Where(mr => !mr.gameObject.name.Equals("GFX")).ToList();
         }
     }
 

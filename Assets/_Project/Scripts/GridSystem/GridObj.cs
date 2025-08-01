@@ -72,7 +72,6 @@ public class RoadTile
     {
         if (State == GridObjType.Road && BaseBuildingObj != null)
         {
-            Debug.Log("Clearing tile object and disconnecting from base building.");
             BaseBuildingObj.AnyConnectionDisconnected();
         }
 

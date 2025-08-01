@@ -67,7 +67,6 @@ public class LevelManager : MonoBehaviour
     public void NextLevel()
     {
         PlayerPrefs.SetInt("LevelIndex", PlayerPrefs.GetInt("LevelIndex", 0) + 1);
-        Debug.Log("Proceeding to Next Level");
     }
 
     public void LevelEnded(bool success)

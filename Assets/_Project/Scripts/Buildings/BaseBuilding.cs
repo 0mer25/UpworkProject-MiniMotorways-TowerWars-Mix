@@ -8,13 +8,13 @@ public abstract class BaseBuilding : GridObj, IBuilding
     [SerializeField] private int health = 1;
     [SerializeField] private int startLevel = -1;
 
-    public bool CanConnect { get => currentConnectionCount <= level; set => CanConnect = value; }
+    public bool CanConnect { get => currentConnectionCount < level; set => CanConnect = value; }
     public int Health => health;
     [SerializeField] private MaterialHolder materialHolder;
     [SerializeField] private List<MeshRenderer> meshRenderers;
     [SerializeField] private TextMeshPro healthText;
     protected int level = -1;
-    private int currentConnectionCount = 0;
+    protected int currentConnectionCount = 0;
     private Material defaultMaterial;
 
     // ---------------------------------------------------
@@ -25,7 +25,8 @@ public abstract class BaseBuilding : GridObj, IBuilding
     public Team team;
     public Team BuildingTeam => team;
 
-    [SerializeField] private List<GameObject> connectedPointVisuals;
+    [SerializeField] protected List<GameObject> connectedPointVisuals;
+    [SerializeField] protected List<GameObject> connectionPointsParents;
 
     void Awake()
     {
@@ -53,7 +54,6 @@ public abstract class BaseBuilding : GridObj, IBuilding
         UpdateGfx(level);
         UpdateTileLogic();
         UpdateConnectionPoints();
-        Debug.Log("BaseBuilding enabled and initialized.");
     }
 
     private void UpdateConnectionPoints()
@@ -202,7 +202,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
         return CanConnect;
     }
 
-    private GameObject FindFirstConnectionPointVisual(bool isConnected)
+    protected GameObject FindFirstConnectionPointVisual(bool isConnected)
     {
         for (int i = 0; i < connectedPointVisuals.Count; i++)
         {
@@ -217,6 +217,20 @@ public abstract class BaseBuilding : GridObj, IBuilding
         }
 
         return null;
+    }
+    protected void CloseAllConnectionPointVisuals()
+    {
+        for (int i = 0; i < connectedPointVisuals.Count; i++)
+        {
+            for (int j = 0; j < connectedPointVisuals[i].transform.childCount; j++)
+            {
+                if (connectedPointVisuals[i].transform.GetChild(j).name.Contains("Connected") &&
+                    connectedPointVisuals[i].transform.GetChild(j).gameObject.activeSelf == true)
+                {
+                    connectedPointVisuals[i].transform.GetChild(j).gameObject.SetActive(false);
+                }
+            }
+        }
     }
 
 

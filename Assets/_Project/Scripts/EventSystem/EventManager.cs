@@ -26,7 +26,6 @@ public static class EventManager
 
         public OnRoadPlaced(GridTile tile)
         {
-            Debug.Log("Road placed on tile: " + tile.GridPosition);
             this.tile = tile;
         }
     }

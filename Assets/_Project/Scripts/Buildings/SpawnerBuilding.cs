@@ -128,12 +128,26 @@ public class SpawnerBuilding : BaseBuilding
 
     protected override void UpdateGfx(int newLevel)
     {
+        CloseAllConnectionPointVisuals();
+        connectedPointVisuals.Clear();
+
         if (newLevel == 1)
         {
             if (!upgradeFloors[0].activeSelf)
             {
                 upgradeFloors[0].SetActive(true);
                 upgradeFloors[0].transform.DOScale(Vector3.one, 0.5f).From(Vector3.zero).SetEase(Ease.OutBack);
+
+                for(int i = 0; i < connectionPointsParents[0].transform.childCount; i++)
+                {
+                    var child = connectionPointsParents[0].transform.GetChild(i);
+                    connectedPointVisuals.Add(child.gameObject);
+                }
+
+                for(int i = 0; i < currentConnectionCount; i++)
+                {
+                    FindFirstConnectionPointVisual(true).SetActive(true);
+                }
 
                 if (upgradeFloors[1].activeSelf)
                 {
@@ -150,6 +164,17 @@ public class SpawnerBuilding : BaseBuilding
             {
                 upgradeFloors[1].SetActive(true);
                 upgradeFloors[1].transform.DOScale(Vector3.one, 0.5f).From(Vector3.zero).SetEase(Ease.OutBack);
+
+                for (int i = 0; i < connectionPointsParents[1].transform.childCount; i++)
+                {
+                    var child = connectionPointsParents[1].transform.GetChild(i);
+                    connectedPointVisuals.Add(child.gameObject);
+                }
+                
+                for(int i = 0; i < currentConnectionCount; i++)
+                {
+                    FindFirstConnectionPointVisual(true).SetActive(true);
+                }
             }
 
             if (upgradeFloors[0].activeSelf)
@@ -157,7 +182,7 @@ public class SpawnerBuilding : BaseBuilding
                 upgradeFloors[0].SetActive(false);
                 upgradeFloors[0].transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
             }
-            else if(!upgradeFloors[2].activeSelf)
+            else if (!upgradeFloors[2].activeSelf)
             {
                 upgradeFloors[2].SetActive(false);
                 upgradeFloors[2].transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
@@ -169,6 +194,17 @@ public class SpawnerBuilding : BaseBuilding
             {
                 upgradeFloors[2].SetActive(true);
                 upgradeFloors[2].transform.DOScale(Vector3.one, 0.5f).From(Vector3.zero).SetEase(Ease.OutBack);
+
+                for(int i = 0; i < connectionPointsParents[2].transform.childCount; i++)
+                {
+                    var child = connectionPointsParents[2].transform.GetChild(i);
+                    connectedPointVisuals.Add(child.gameObject);
+                }
+
+                for(int i = 0; i < currentConnectionCount; i++)
+                {
+                    FindFirstConnectionPointVisual(true).SetActive(true);
+                }
 
                 if (upgradeFloors[1].activeSelf)
                 {
