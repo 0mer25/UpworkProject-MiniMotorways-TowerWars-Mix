@@ -223,7 +223,7 @@ MonoBehaviour:
   crashPoints:
   - {fileID: 690624989056605362}
   - {fileID: 380402289551193675}
-  explosionDuration: 1.5
+  distanceThreshold: 0.1
   randomPosRange: 3
   team: 1
 --- !u!195 &3121156957574583442
@@ -235,7 +235,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5921990077964771648}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.02
+  m_Radius: 0.6
   m_Speed: 3.5
   m_Acceleration: 60
   avoidancePriority: 50
