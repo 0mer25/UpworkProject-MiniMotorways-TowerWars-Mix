@@ -52,9 +52,26 @@ public static class EventManager
     }
 
 
+    public struct OnAnyBuildingCaptured : IEventType
+    {
+        public Team previousTeam;
+        public Team newTeam;
+        public OnAnyBuildingCaptured(Team previousTeam, Team newTeam)
+        {
+            this.previousTeam = previousTeam;
+            this.newTeam = newTeam;
+        }
+    }
 
+    public struct OnLevelCompleted : IEventType
+    {
 
+    }
 
+    public struct OnLevelFailed : IEventType
+    {
+        
+    }
 
 
 

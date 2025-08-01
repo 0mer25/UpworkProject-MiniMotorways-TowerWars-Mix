@@ -12,6 +12,19 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
+    void OnEnable()
+    {
+        EventManager.RegisterEvent<EventManager.OnLevelCompleted>(OnLevelCompleted);
+        EventManager.RegisterEvent<EventManager.OnLevelFailed>(OnLevelFailed);
+    }
+    void OnDisable()
+    {
+        EventManager.DeregisterEvent<EventManager.OnLevelCompleted>(OnLevelCompleted);
+        EventManager.DeregisterEvent<EventManager.OnLevelFailed>(OnLevelFailed);
+    }
+
+
+
     void Start()
     {
         InitializeLevel();
@@ -31,7 +44,7 @@ public class LevelManager : MonoBehaviour
             {
                 int randomIndex = Random.Range(0, emptyAreas.Count);
                 var randomArea = emptyAreas[randomIndex];
-                
+
                 currentLevel.SpawnBuildings(new Vector3(randomArea.x * 2, 0, randomArea.y * 2));
             }
             else
@@ -80,4 +93,16 @@ public class LevelManager : MonoBehaviour
             ResetLevel();
         }
     }
+
+    private void OnLevelFailed(EventManager.OnLevelFailed failed)
+    {
+        LevelEnded(false);
+    }
+
+    private void OnLevelCompleted(EventManager.OnLevelCompleted completed)
+    {
+        LevelEnded(true);
+    }
+    
+
 }

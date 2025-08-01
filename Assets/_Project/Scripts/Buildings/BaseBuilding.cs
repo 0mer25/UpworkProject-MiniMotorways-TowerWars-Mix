@@ -292,6 +292,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
     protected void ChangeTeam(Team newTeam)
     {
+        EventManager.TriggerEvent(new EventManager.OnAnyBuildingCaptured(team, newTeam));
         team = newTeam;
         SetMaterialToTeam();
     }
