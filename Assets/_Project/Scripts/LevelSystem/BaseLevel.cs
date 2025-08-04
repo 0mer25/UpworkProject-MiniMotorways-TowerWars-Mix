@@ -11,6 +11,8 @@ public class BaseLevel : MonoBehaviour
     [SerializeField] private List<UIProgressTeamHolder> teamHolders;
     [SerializeField] private Transform teamHolderParent;
 
+    private bool isPlayerStartedToDrawRoad = false;
+
     void OnEnable()
     {
         EventManager.TriggerEvent(new EventManager.OnRoadCountChanged(totalRoadTiles));
@@ -37,32 +39,76 @@ public class BaseLevel : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating(nameof(SpawnRandomBuildings), 15f, TotalBuildings);
+        InvokeRepeating(nameof(SpawnRandomBuildings), 5f, 5);
+        InvokeRepeating(nameof(DrawRandomRoadPath), 60f, 15f);
+
+        EventManager.RegisterEvent<EventManager.OnPlayerStartedToDrawRoad>(OnPlayerStartedToDrawRoad);
     }
+
     void OnDisable()
     {
+        CancelInvoke(nameof(SpawnRandomBuildings));
+        CancelInvoke(nameof(DrawRandomRoadPath));
         EventManager.DeregisterEvent<EventManager.OnAnyBuildingCaptured>(OnAnyBuildingCaptured);
+        EventManager.DeregisterEvent<EventManager.OnPlayerStartedToDrawRoad>(OnPlayerStartedToDrawRoad);
+    }
+
+    private void OnPlayerStartedToDrawRoad(EventManager.OnPlayerStartedToDrawRoad road)
+    {
+        isPlayerStartedToDrawRoad = true;
+
+        CancelInvoke(nameof(DrawRandomRoadPath));
+        
+        InvokeRepeating(nameof(DrawRandomRoadPath), 5f, 15f);
     }
 
     private void SpawnRandomBuildings()
     {
-        for (int i = 0; i < allBuildings.Count; i++)
+        var emptyAreas = RoadManager.Instance.FindAll3x3EmptyAreaCenters();
+        if (emptyAreas != null && emptyAreas.Count > 0)
         {
-            GameObject building = allBuildings[i].gameObject;
-            if (!building.activeSelf)
-            {
-                building.SetActive(true);
-                return;
-            }
+            int randomIndex = Random.Range(0, emptyAreas.Count);
+            var randomArea = emptyAreas[randomIndex];
 
-            if( i == allBuildings.Count - 1)
+            // Choose a random building to spawn
+
+            List<BaseBuilding> buildingsToSpawn = allBuildings.FindAll(b => !b.gameObject.activeSelf);
+
+            if (buildingsToSpawn.Count > 0)
             {
-                CancelInvoke(nameof(SpawnRandomBuildings));
+                int buildingIndex = Random.Range(0, buildingsToSpawn.Count);
+                BaseBuilding buildingToSpawn = buildingsToSpawn[buildingIndex];
+                if (buildingToSpawn != null && !buildingToSpawn.gameObject.activeSelf)
+                {
+                    buildingToSpawn.transform.position = new Vector3(randomArea.x * 2, 0, randomArea.y * 2);
+                    buildingToSpawn.gameObject.SetActive(true);
+                }
             }
+        }
+        else
+        {
+            Debug.LogError("No empty 3x3 area found.");
         }
     }
 
+    private void DrawRandomRoadPath()
+    {
+        List<BaseBuilding> spawnerBuildings = allBuildings.FindAll(b => b is SpawnerBuilding building && building.gameObject.activeSelf && building.CanConnect &&
+            building.team != Team.Blue && building.team != Team.Neutral && building.hasDrivenRoad == false);
 
+        // If there are no spawner buildings, return
+        if (spawnerBuildings.Count == 0)
+        {
+            return;
+        }
+
+        // Randomly select a spawner building
+        int randomIndex = Random.Range(0, spawnerBuildings.Count);
+        SpawnerBuilding selectedSpawner = spawnerBuildings[randomIndex] as SpawnerBuilding;
+
+        // Draw the road path from the selected spawner building
+        selectedSpawner.DrawRoadPath();
+    }
 
     private void OnAnyBuildingCaptured(EventManager.OnAnyBuildingCaptured captured)
     {

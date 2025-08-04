@@ -16,14 +16,14 @@ public class LevelManager : MonoBehaviour
     {
         EventManager.RegisterEvent<EventManager.OnLevelCompleted>(OnLevelCompleted);
         EventManager.RegisterEvent<EventManager.OnLevelFailed>(OnLevelFailed);
+        EventManager.RegisterEvent<EventManager.OnResetButtonPressed>(OnResetButtonPressed);
     }
     void OnDisable()
     {
         EventManager.DeregisterEvent<EventManager.OnLevelCompleted>(OnLevelCompleted);
         EventManager.DeregisterEvent<EventManager.OnLevelFailed>(OnLevelFailed);
+        EventManager.DeregisterEvent<EventManager.OnResetButtonPressed>(OnResetButtonPressed);
     }
-
-
 
     void Start()
     {
@@ -86,7 +86,8 @@ public class LevelManager : MonoBehaviour
     {
         if (success)
         {
-            NextLevel();
+            //NextLevel();
+            ResetLevel();
         }
         else
         {
@@ -102,6 +103,11 @@ public class LevelManager : MonoBehaviour
     private void OnLevelCompleted(EventManager.OnLevelCompleted completed)
     {
         LevelEnded(true);
+    }
+
+    private void OnResetButtonPressed(EventManager.OnResetButtonPressed pressed)
+    {
+        ResetLevel();
     }
     
 

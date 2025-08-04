@@ -17,6 +17,7 @@ public class GridTile : MonoBehaviour
     public bool IsObstacle => obstaclePrefab != null;
     private List<MeshRenderer> meshRenderers;
     public GameObject RoadObject => currentRoad;
+    public bool canBeDeleted = true;
 
     void Awake()
     {
@@ -30,7 +31,7 @@ public class GridTile : MonoBehaviour
     void OnEnable()
     {
         EventManager.RegisterEvent<EventManager.OnRoadPlaced>(UpdateGfxAfterAnyPlacement);
-        
+
         _roadTile = RoadManager.Instance.AddTileToList(this);
     }
 
@@ -39,16 +40,24 @@ public class GridTile : MonoBehaviour
         EventManager.DeregisterEvent<EventManager.OnRoadPlaced>(UpdateGfxAfterAnyPlacement);
     }
 
-    public void PlaceRoad(GameObject roadPrefab, Vector2Int direction)
+    public void PlaceRoad(bool canBeDeleted = true)
     {
         if (HasRoad || IsObstacle) return;
 
         // Place the road prefab at the tile's position
-        currentRoad = Instantiate(roadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), Quaternion.identity, transform);
+        currentRoad = Instantiate(straightRoadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), Quaternion.identity, transform);
 
-        RoadCountManager.Instance.DecrementRoadCount(1);
+        if (canBeDeleted)
+        {
+            RoadCountManager.Instance.DecrementRoadCount(1);
+        }
 
         meshRenderers = currentRoad.GetComponentsInChildren<MeshRenderer>().ToList();
+
+        if(!canBeDeleted)
+        {
+            SetForAIDrawing();
+        }
 
         EventManager.TriggerEvent(new EventManager.OnRoadPlaced(this));
     }
@@ -82,6 +91,18 @@ public class GridTile : MonoBehaviour
         }
     }
 
+    private void SetForAIDrawing()
+    {   
+        canBeDeleted = false; // Disable deletion for AI drawing
+        if (meshRenderers.Count > 0)
+        {
+            foreach (var renderer in meshRenderers)
+            {
+                renderer.material.color = Color.grey; // Set the color to grey to indicate deletion
+                renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0.5f); // Make it semi-transparent
+            }
+        }
+    }
     private void UpdateGfxAfterAnyPlacement(EventManager.OnRoadPlaced placed)
     {
         if (!HasRoad) return;
@@ -222,17 +243,27 @@ public class GridTile : MonoBehaviour
 
         // Update the mesh renderers after replacing the road
         meshRenderers = currentRoad.GetComponentsInChildren<MeshRenderer>().ToList();
+
+        if(!canBeDeleted)
+        {
+            SetForAIDrawing();
+        }
     }
     private void ReplaceWithStraightRoad(Quaternion rotation)
     {
         meshRenderers.Clear();
         _roadTile.ClearTileObj();
         Destroy(currentRoad);
-        
+
         currentRoad = Instantiate(straightRoadPrefab, new Vector3(transform.position.x, transform.position.y + 0.02f, transform.position.z), rotation, transform);
 
         // Update the mesh renderers after replacing the road
         meshRenderers = currentRoad.GetComponentsInChildren<MeshRenderer>().ToList();
+        
+        if(!canBeDeleted)
+        {
+            SetForAIDrawing();
+        }
     }
 
     private void ReplaceWithThreeWayRoad(Quaternion rotation)
@@ -243,6 +274,11 @@ public class GridTile : MonoBehaviour
 
         // Update the mesh renderers after replacing the road
         meshRenderers = currentRoad.GetComponentsInChildren<MeshRenderer>().ToList();
+
+        if(!canBeDeleted)
+        {
+            SetForAIDrawing();
+        }
     }
     private void ReplaceWithFourWayRoad(Quaternion rotation)
     {
@@ -252,5 +288,10 @@ public class GridTile : MonoBehaviour
 
         // Update the mesh renderers after replacing the road
         meshRenderers = currentRoad.GetComponentsInChildren<MeshRenderer>().ToList();
+
+        if(!canBeDeleted)
+        {
+            SetForAIDrawing();
+        }
     }
 }

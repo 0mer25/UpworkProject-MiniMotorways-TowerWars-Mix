@@ -73,9 +73,15 @@ public static class EventManager
         
     }
 
+    public struct OnPlayerStartedToDrawRoad : IEventType
+    {
+        
+    }
 
-
-
+    public struct OnResetButtonPressed : IEventType
+    {
+        
+    }
 
 
 

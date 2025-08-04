@@ -36,7 +36,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     private RoadTile _currentRoadTile;
     private bool _isMovementStarted = false;
     private bool _isMovingToNextTile = false;
-    protected bool isBlowUp = false;
+    public bool isBlowUp = false;
     protected bool canDuplicate = true;
 
     void OnEnable()

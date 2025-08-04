@@ -8,7 +8,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
     [SerializeField] private int health = 1;
     [SerializeField] private int startLevel = -1;
 
-    public bool CanConnect { get => currentConnectionCount < level; set => CanConnect = value; }
+    public bool CanConnect { get => currentConnectionCount < level + 1; }
     public int Health => health;
     [SerializeField] private MaterialHolder materialHolder;
     [SerializeField] private List<MeshRenderer> meshRenderers;
@@ -22,13 +22,14 @@ public abstract class BaseBuilding : GridObj, IBuilding
     protected RoadTile _centerGridRoad;
     protected List<RoadTile> _connectionTiles;
     public List<RoadTile> ConnectionTiles => _connectionTiles;
+    public RoadTile CenterTile => _centerGridRoad;
     public Team team;
     public Team BuildingTeam => team;
 
     [SerializeField] protected List<GameObject> connectedPointVisuals;
     [SerializeField] protected List<GameObject> connectionPointsParents;
 
-    void Awake()
+    protected virtual void Awake()
     {
         if (startLevel == -1)
         {
@@ -204,19 +205,38 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
     protected GameObject FindFirstConnectionPointVisual(bool isConnected)
     {
-        for (int i = 0; i < connectedPointVisuals.Count; i++)
+        if (isConnected)
         {
-            for (int j = 0; j < connectedPointVisuals[i].transform.childCount; j++)
+            for (int i = 0; i < connectedPointVisuals.Count; i++)
             {
-                if (connectedPointVisuals[i].transform.GetChild(j).name.Contains("Connected") &&
-                    connectedPointVisuals[i].transform.GetChild(j).gameObject.activeSelf != isConnected)
+                for (int j = 0; j < connectedPointVisuals[i].transform.childCount; j++)
                 {
-                    return connectedPointVisuals[i].transform.GetChild(j).gameObject;
+                    if (connectedPointVisuals[i].transform.GetChild(j).name.Contains("Connected") &&
+                        connectedPointVisuals[i].transform.GetChild(j).gameObject.activeSelf != isConnected)
+                    {
+                        return connectedPointVisuals[i].transform.GetChild(j).gameObject;
+                    }
                 }
             }
-        }
 
-        return null;
+            return null;
+        }
+        else
+        {
+            for (int i = connectedPointVisuals.Count - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < connectedPointVisuals[i].transform.childCount; j++)
+                {
+                    if (connectedPointVisuals[i].transform.GetChild(j).name.Contains("Connected") &&
+                        connectedPointVisuals[i].transform.GetChild(j).gameObject.activeSelf != isConnected)
+                    {
+                        return connectedPointVisuals[i].transform.GetChild(j).gameObject;
+                    }
+                }
+            }
+
+            return null;
+        }
     }
     protected void CloseAllConnectionPointVisuals()
     {

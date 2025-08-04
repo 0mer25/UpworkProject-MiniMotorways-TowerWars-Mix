@@ -108,6 +108,10 @@ public class RoadManager : MonoBehaviour
 
                 int tentativeG = gScore[current] + 1; // Assuming all tiles have equal cost
 
+                if (!gScore.ContainsKey(neighbor))
+                {
+                    gScore[neighbor] = int.MaxValue;
+                }
                 if (tentativeG < gScore[neighbor])
                 {
                     cameFrom[neighbor] = current;

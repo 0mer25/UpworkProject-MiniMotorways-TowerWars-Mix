@@ -12,6 +12,8 @@ public class RoadDrawer : MonoBehaviour
     private bool isDeleting = false;
     private bool waitForNextTile = false;
 
+    private bool isPlayerStartedToDrawRoad = false;
+
     private List<GridTile> willDeleteTiles = new List<GridTile>();
 
     void OnEnable()
@@ -35,7 +37,6 @@ public class RoadDrawer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
 
@@ -52,6 +53,12 @@ public class RoadDrawer : MonoBehaviour
                 }
 
                 isDrawing = true;
+
+                if(!isPlayerStartedToDrawRoad)
+                {
+                    isPlayerStartedToDrawRoad = true;
+                    EventManager.TriggerEvent(new EventManager.OnPlayerStartedToDrawRoad());
+                }
             }
             else
             {
@@ -85,8 +92,6 @@ public class RoadDrawer : MonoBehaviour
             {
                 GridTile currentTile = hit.collider.GetComponent<GridTile>();
 
-                Vector2Int direction = Vector2Int.up; // Default direction
-
                 if (currentTile && currentTile.IsObstacle)
                 {
                     isDrawing = false;
@@ -109,7 +114,7 @@ public class RoadDrawer : MonoBehaviour
                 }
 
                 // Place the road prefab at the tile's position
-                if (currentTile && !waitForNextTile) currentTile.PlaceRoad(straightRoadPrefab, direction);
+                if (currentTile && !waitForNextTile) currentTile.PlaceRoad();
             }
         }
 
@@ -122,7 +127,7 @@ public class RoadDrawer : MonoBehaviour
             {
                 GridTile tileToDelete = hit.collider.GetComponent<GridTile>();
 
-                if (tileToDelete != null && tileToDelete.HasRoad && !willDeleteTiles.Contains(tileToDelete))
+                if (tileToDelete != null && tileToDelete.HasRoad && !willDeleteTiles.Contains(tileToDelete) && tileToDelete.canBeDeleted)
                 {
                     willDeleteTiles.Add(tileToDelete);
                     tileToDelete.SetForDeletion();

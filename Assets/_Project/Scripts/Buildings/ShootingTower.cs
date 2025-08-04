@@ -6,7 +6,8 @@ public class ShootingTower : BaseBuilding
 {
     [Header("Shooting Tower Settings")]
     [SerializeField] private List<TowerBuildingData> shootingDatas;
-    [SerializeField] private float fireRate = 1.0f; // Time in seconds between shot
+    [SerializeField] private float baseFireRate = 6.0f; // Base fire rate of the tower
+    private float FireRate => baseFireRate / level;
     private TowerBuildingData ShootingData => level == -1 ? shootingDatas[0] : shootingDatas[level - 1];
     private float Range => ShootingData.attackRange; // Range of the tower
     [SerializeField] private GameObject projectilePrefab; // Prefab for the projectile
@@ -30,11 +31,6 @@ public class ShootingTower : BaseBuilding
 
         if (targets.Length == 0) return;
 
-        foreach (Collider target in targets)
-        {
-            Debug.Log($"Target found: {target.name}");
-        }
-
         Transform closestTarget = null;
         float closestDistance = Mathf.Infinity;
         foreach (Collider target in targets)
@@ -56,7 +52,7 @@ public class ShootingTower : BaseBuilding
         if (Time.time >= nextFireTime && closestTarget != null)
         {
             Shoot(closestTarget);
-            nextFireTime = Time.time + fireRate;
+            nextFireTime = Time.time + FireRate;
         }
     }
     private void Shoot(Transform target)
