@@ -34,10 +34,35 @@ public class BaseLevel : MonoBehaviour
             }
         }
     }
+
+    void Start()
+    {
+        InvokeRepeating(nameof(SpawnRandomBuildings), 15f, TotalBuildings);
+    }
     void OnDisable()
     {
         EventManager.DeregisterEvent<EventManager.OnAnyBuildingCaptured>(OnAnyBuildingCaptured);
     }
+
+    private void SpawnRandomBuildings()
+    {
+        for (int i = 0; i < allBuildings.Count; i++)
+        {
+            GameObject building = allBuildings[i].gameObject;
+            if (!building.activeSelf)
+            {
+                building.SetActive(true);
+                return;
+            }
+
+            if( i == allBuildings.Count - 1)
+            {
+                CancelInvoke(nameof(SpawnRandomBuildings));
+            }
+        }
+    }
+
+
 
     private void OnAnyBuildingCaptured(EventManager.OnAnyBuildingCaptured captured)
     {
@@ -73,7 +98,6 @@ public class BaseLevel : MonoBehaviour
         };
     }
 
-
     private int GetBlueTowerCount()
     {
         int count = 0;
@@ -86,9 +110,6 @@ public class BaseLevel : MonoBehaviour
         }
         return count;
     }
-
-
-
 
     public void SpawnBuildings(Vector3 spawnPosition)
     {

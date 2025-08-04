@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93a43e0da1bd8b46bfd09f074f3b15b, type: 3}
   m_Name: TowerBuildingData_Level_2
   m_EditorClassIdentifier: 
-  level: 2
   bulletPrefab: {fileID: 1415513574387992975, guid: fe1fd2342d1aca046926c5d82fef2ff6, type: 3}
-  attackRange: 7
+  attackRange: 9
   attackDamage: 1

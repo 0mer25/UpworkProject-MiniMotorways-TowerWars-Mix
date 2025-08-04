@@ -89,7 +89,7 @@ MonoBehaviour:
   - {fileID: 4899199656822889043}
   - {fileID: 8030142376739402253}
   - {fileID: 2215360627467811238}
-  spawnerData: {fileID: 11400000, guid: 1a5358f56e593af408d4d84723828d84, type: 2}
+  spawnerData: {fileID: 11400000, guid: f6792f5c9ad7b5e4e842e308c90d1e76, type: 2}
   upgradeFloors:
   - {fileID: 3944074073890946543}
   - {fileID: 5478380502488947489}
@@ -1045,7 +1045,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4352565786983931059}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.38977438, y: -0.19707409, z: -0.08578043, w: -0.89547724}
   m_LocalPosition: {x: 0, y: 2.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1

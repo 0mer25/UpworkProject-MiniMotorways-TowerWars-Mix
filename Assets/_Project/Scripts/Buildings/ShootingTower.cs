@@ -5,9 +5,10 @@ using System.Collections.Generic;
 public class ShootingTower : BaseBuilding
 {
     [Header("Shooting Tower Settings")]
-    [SerializeField] private TowerBuildingData shootingData;
-    [SerializeField] private float fireRate = 1.0f; // Time in seconds between shots
-    [SerializeField] private float range = 10.0f; // Range of the shooting tower
+    [SerializeField] private List<TowerBuildingData> shootingDatas;
+    [SerializeField] private float fireRate = 1.0f; // Time in seconds between shot
+    private TowerBuildingData ShootingData => level == -1 ? shootingDatas[0] : shootingDatas[level - 1];
+    private float Range => ShootingData.attackRange; // Range of the tower
     [SerializeField] private GameObject projectilePrefab; // Prefab for the projectile
     [SerializeField] private Transform projectileSpawnPoint; // Point where the projectile spawns
     [SerializeField] private Transform rangeGfx;
@@ -20,12 +21,12 @@ public class ShootingTower : BaseBuilding
 
     void OnValidate()
     {
-        rangeGfx.localScale = new Vector3(range * 2, range * 2, 1);
+        rangeGfx.localScale = new Vector3(Range * 2, Range * 2, 1);
     }
     void Update()
     {
         // Find the closest target within range
-        Collider[] targets = Physics.OverlapSphere(transform.position, range, carLayerMask);
+        Collider[] targets = Physics.OverlapSphere(transform.position, Range, carLayerMask);
 
         if (targets.Length == 0) return;
 
@@ -67,7 +68,7 @@ public class ShootingTower : BaseBuilding
         projectile.transform.LookAt(target);
         projectile.transform.DOMove(target.position, .15f).OnComplete(() =>
         {
-            target.GetComponent<BaseCar>()?.TakeDamage(shootingData.attackDamage);
+            target.GetComponent<BaseCar>()?.TakeDamage(ShootingData.attackDamage);
             DestroyBullet(projectile);
         });
     }
@@ -78,7 +79,7 @@ public class ShootingTower : BaseBuilding
 
     protected override void UpdateGfx(int newLevel)
     {
-        rangeGfx.localScale = new Vector3(range * 2, range * 2, 1);
+        rangeGfx.localScale = new Vector3(Range * 2, Range * 2, 1);
         if (newLevel == 1)
         {
             if (!upgradeTowers[0].activeSelf)
@@ -135,7 +136,7 @@ public class ShootingTower : BaseBuilding
     {
         Gizmos.color = Color.red;
 
-        DrawCircle(transform.position, range, 36); // Draw a circle to visualize the range
+        DrawCircle(transform.position, Range, 36); // Draw a circle to visualize the range
     }
 
     private void DrawCircle(Vector3 center, float radius, int segments)

@@ -81,7 +81,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         BaseCar car = carGO.GetComponent<BaseCar>();
         car.canDuplicate = false;
         car.SpawnCar(spawner);
-        car.Initialize(_currentRoadTile, _roadMap[_roadMap.Count - 1], team, 0);
+        car.Initialize(_currentRoadTile, _roadMap[_roadMap.Count - 1], team, 0, transform.parent);
     }
 
     public virtual void SpawnCar(SpawnerBuilding spawnerBuilding)
@@ -90,8 +90,13 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         spawner = spawnerBuilding;
     }
 
-    public virtual void Initialize(RoadTile startTile, RoadTile target, Team team, int startTileIndex = 0)
+    public virtual void Initialize(RoadTile startTile, RoadTile target, Team team, int startTileIndex = 0, Transform levelParent = null)
     {
+        if (levelParent != null)
+        {
+            transform.SetParent(levelParent);
+        }
+
         this.team = team;
         _currentRoadTile = startTile;
         SetTarget(target, startTileIndex);
