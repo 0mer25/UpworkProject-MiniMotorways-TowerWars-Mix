@@ -48,6 +48,7 @@ public class BaseLevel : MonoBehaviour
             {
                 holder.team = captured.newTeam;
                 holder.SetImage(GetTeamColor(captured.newTeam));
+                break;
             }
         }
 
