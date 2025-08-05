@@ -8,7 +8,7 @@ public class BaseLevel : MonoBehaviour
     public int TotalBuildings => allBuildings.Count;
     public List<BaseBuilding> allBuildings;
 
-    [SerializeField] private List<UIProgressTeamHolder> teamHolders;
+    private List<UIProgressTeamHolder> teamHolders;
     [SerializeField] private Transform teamHolderParent;
 
     void OnEnable()

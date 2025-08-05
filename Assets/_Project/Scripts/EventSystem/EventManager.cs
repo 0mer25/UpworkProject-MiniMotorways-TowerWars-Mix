@@ -83,7 +83,23 @@ public static class EventManager
         
     }
 
+    public struct OnAnyBuildingSpawned : IEventType
+    {
+        public Team team;
+        public OnAnyBuildingSpawned(Team team)
+        {
+            this.team = team;
+        }
+    }
 
+    public struct OnTimerForSpawnCompleted : IEventType
+    {
+        public Team team;
+        public OnTimerForSpawnCompleted(Team team)
+        {
+            this.team = team;
+        }
+    }
 
 
 
