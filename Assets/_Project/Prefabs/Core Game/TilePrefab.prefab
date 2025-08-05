@@ -64,8 +64,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8955146812381107103, guid: bf300ab524aedb74fa8b65be32dedbc7, type: 3}
-  - {fileID: -7184819803674296287, guid: bf300ab524aedb74fa8b65be32dedbc7, type: 3}
+  - {fileID: 2100000, guid: 4cfb5688cb15cb14290f852cb9afa33c, type: 2}
+  - {fileID: 2100000, guid: 49baec1bc8c41c744ab09bd56278d916, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -155,8 +155,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cc968e3e344ebc4d9bc3e528ce1f871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GridPosition: {x: 0, y: 0}
+  currentRoad: {fileID: 0}
   straightRoadPrefab: {fileID: 5508535387871675358, guid: d5eb9e574973b0e42b5a1c87320f8b9b, type: 3}
+  cornerRoadPrefab: {fileID: 0}
+  threeWayRoadPrefab: {fileID: 0}
+  fourWayRoadPrefab: {fileID: 0}
   obstaclePrefab: {fileID: 0}
+  canBeDeleted: 1
 --- !u!1 &3731524370634135590
 GameObject:
   m_ObjectHideFlags: 0

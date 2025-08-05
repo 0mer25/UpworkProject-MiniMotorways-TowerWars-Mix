@@ -31,6 +31,7 @@ public class RoadDrawer : MonoBehaviour
         isDrawing = false;
         isDeleting = false;
         waitForNextTile = false;
+        isPlayerStartedToDrawRoad = false;
     }
 
     void Update()

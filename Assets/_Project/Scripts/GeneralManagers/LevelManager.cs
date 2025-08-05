@@ -80,14 +80,23 @@ public class LevelManager : MonoBehaviour
     public void NextLevel()
     {
         PlayerPrefs.SetInt("LevelIndex", PlayerPrefs.GetInt("LevelIndex", 0) + 1);
+        
+        currentLevel.transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+        {
+            Destroy(currentLevel.gameObject);
+            currentLevel = null;
+        });
+        DOVirtual.DelayedCall(0.55f, () =>
+        {
+            InitializeLevel();
+        });
     }
 
     public void LevelEnded(bool success)
     {
         if (success)
         {
-            //NextLevel();
-            ResetLevel();
+            NextLevel();
         }
         else
         {
@@ -97,11 +106,13 @@ public class LevelManager : MonoBehaviour
 
     private void OnLevelFailed(EventManager.OnLevelFailed failed)
     {
+        Debug.Log("Level failed");
         LevelEnded(false);
     }
 
     private void OnLevelCompleted(EventManager.OnLevelCompleted completed)
     {
+        Debug.Log("Level completed");
         LevelEnded(true);
     }
 

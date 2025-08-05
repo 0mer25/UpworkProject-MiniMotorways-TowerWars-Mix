@@ -126,6 +126,7 @@ public class BaseLevel : MonoBehaviour
 
         if (GetBlueTowerCount() >= TotalBuildings)
         {
+            Debug.Log("All blue towers captured");
             EventManager.TriggerEvent(new EventManager.OnLevelCompleted());
         }
         else if (GetBlueTowerCount() <= 0)
@@ -154,6 +155,7 @@ public class BaseLevel : MonoBehaviour
                 count++;
             }
         }
+        Debug.Log($"Blue tower count: {count}");
         return count;
     }
 

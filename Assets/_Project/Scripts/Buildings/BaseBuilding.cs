@@ -8,7 +8,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
     [SerializeField] private int health = 1;
     [SerializeField] private int startLevel = -1;
 
-    public bool CanConnect { get => currentConnectionCount < level + 1; }
+    public bool CanConnect { get => this is ShootingTower || currentConnectionCount < level + 1; }
     public int Health => health;
     [SerializeField] private MaterialHolder materialHolder;
     [SerializeField] private List<MeshRenderer> meshRenderers;
@@ -312,9 +312,11 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
     protected void ChangeTeam(Team newTeam)
     {
-        EventManager.TriggerEvent(new EventManager.OnAnyBuildingCaptured(team, newTeam));
+        Team previousTeam = team;
         team = newTeam;
         SetMaterialToTeam();
+        
+        EventManager.TriggerEvent(new EventManager.OnAnyBuildingCaptured(previousTeam, team));
     }
 
     protected void SetMaterialToTeam()
