@@ -118,13 +118,23 @@ public class SpawnerBuilding : BaseBuilding
             if (building == null || building.ConnectionTiles == null)
                 continue;
 
+            List<List<RoadTile>> paths = new List<List<RoadTile>>();
+
             foreach (var connection in building.ConnectionTiles)
             {
                 var path = RoadManager.Instance.ShortestRoadPath(startTile, connection);
                 if (path != null && path.Count > 0)
                 {
-                    return connection; // or return target if you want to track the building
+                    paths.Add(path);
+                    /* return connection; // or return target if you want to track the building */
                 }
+            }
+
+            // Return the shortest path if found
+            if (paths.Count > 0)
+            {
+                paths.Sort((a, b) => a.Count.CompareTo(b.Count));
+                return paths[0][^1]; // Return the last tile of the shortest path
             }
         }
 
