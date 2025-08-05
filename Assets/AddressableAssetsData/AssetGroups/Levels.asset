@@ -14,22 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Levels
   m_GUID: 7eba3597ab48c7741bab288417ed9fe9
-  m_SerializeEntries:
-  - m_GUID: 11871283a110dc54798fb86eb9206b59
-    m_Address: Assets/Levels/Level_2.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1b5acae1f4d14d64baca2df0b3d1d239
-    m_Address: Assets/Levels/Level_1.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5ace35c1fb2f33a48aee776c7940116f
-    m_Address: Assets/Levels/Level_3.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 1793a03ccdeb3a6448725f1f1156fdd4, type: 2}
   m_SchemaSet:

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -51,7 +52,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
     private void SetForStart()
     {
         ChangeTeam(team);
-        healthText.text = health.ToString();
+        UpdateHealthText();
         UpdateGfx(level);
         UpdateTileLogic();
         UpdateConnectionPoints();
@@ -274,7 +275,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
             if (level >= levelLimits.Count + 1)
             {
                 // Check if max level reached
-                healthText.text = health.ToString();
+                UpdateHealthText();
                 return;
             }
 
@@ -293,9 +294,9 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
             health--;
 
-            if(level <= 1) 
+            if (level <= 1)
             {
-                healthText.text = health.ToString();
+                UpdateHealthText();
                 return;
             }
 
@@ -307,7 +308,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
             UpdateGfx(level);
         }
 
-        healthText.text = health.ToString();
+        UpdateHealthText();
     }
 
     protected void ChangeTeam(Team newTeam)
@@ -344,6 +345,15 @@ public abstract class BaseBuilding : GridObj, IBuilding
         level--;
 
         UpdateGfx(level);
+    }
+
+    private void UpdateHealthText()
+    {
+        healthText.text = health.ToString();
+        healthText.transform.GetChild(0).GetComponent<TextMeshPro>().text = health.ToString();
+
+        healthText.transform.DOPunchScale(Vector3.one * 0.1f, 0.2f, 10, 1);
+        healthText.transform.GetChild(0).DOPunchScale(Vector3.one * 0.1f, 0.2f, 10, 1);
     }
 
     protected abstract void UpdateGfx(int newLevel);
