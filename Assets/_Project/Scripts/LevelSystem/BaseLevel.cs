@@ -11,8 +11,6 @@ public class BaseLevel : MonoBehaviour
     [SerializeField] private List<UIProgressTeamHolder> teamHolders;
     [SerializeField] private Transform teamHolderParent;
 
-    private bool isPlayerStartedToDrawRoad = false;
-
     void OnEnable()
     {
         EventManager.TriggerEvent(new EventManager.OnRoadCountChanged(totalRoadTiles));
@@ -55,8 +53,6 @@ public class BaseLevel : MonoBehaviour
 
     private void OnPlayerStartedToDrawRoad(EventManager.OnPlayerStartedToDrawRoad road)
     {
-        isPlayerStartedToDrawRoad = true;
-
         CancelInvoke(nameof(DrawRandomRoadPath));
         
         InvokeRepeating(nameof(DrawRandomRoadPath), 5f, 15f);

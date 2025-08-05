@@ -352,8 +352,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
         healthText.text = health.ToString();
         healthText.transform.GetChild(0).GetComponent<TextMeshPro>().text = health.ToString();
 
-        healthText.transform.DOPunchScale(Vector3.one * 0.1f, 0.2f, 10, 1);
-        healthText.transform.GetChild(0).DOPunchScale(Vector3.one * 0.1f, 0.2f, 10, 1);
+        healthText.transform.DOShakeScale(0.2f, 0.1f, 10, 1);
     }
 
     protected abstract void UpdateGfx(int newLevel);
