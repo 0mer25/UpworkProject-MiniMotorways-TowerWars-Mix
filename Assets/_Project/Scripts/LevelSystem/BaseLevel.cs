@@ -151,7 +151,6 @@ public class BaseLevel : MonoBehaviour
                 count++;
             }
         }
-        Debug.Log($"Blue tower count: {count}");
         return count;
     }
 

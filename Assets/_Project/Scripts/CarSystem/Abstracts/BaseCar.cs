@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,6 +14,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     [SerializeField] private List<Transform> crashPoints;
     [SerializeField] private float distanceThreshold = 0.1f;
     [SerializeField] private float randomPosRange = 3f;
+    [SerializeField] private ParticleSystem smokeParticle;
 
     public int Health { get => remainHealth; set => remainHealth = value; }
     public int Damage { get => carStats.health; }
@@ -38,6 +40,8 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     private bool _isMovingToNextTile = false;
     public bool isBlowUp = false;
     protected bool canDuplicate = true;
+    private bool checkForRoad = false;
+    private bool isDestroyed = false;
 
     void OnEnable()
     {
@@ -100,6 +104,11 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         this.team = team;
         _currentRoadTile = startTile;
         SetTarget(target, startTileIndex);
+
+        DOVirtual.DelayedCall(1.5f, () =>
+        {
+            checkForRoad = true;
+        });
     }
 
     public virtual void BlowUp()
@@ -160,14 +169,27 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     {
         if (isBlowUp) return;
 
-        if(agent == null || !_isMovementStarted)
+        if (agent == null || !_isMovementStarted || !agent.isActiveAndEnabled || agent.gameObject == null)
         {
             return;
+        }
+
+        if (!agent.isOnNavMesh)
+            return;
+
+        if (checkForRoad)
+        {
+            CheckForRoad();
         }
 
         if (_isMovementStarted && !_isMovingToNextTile)
         {
             MoveToNextTile();
+        }
+
+        if (agent == null || !_isMovementStarted || !agent.isActiveAndEnabled || agent.gameObject == null)
+        {
+            return;
         }
 
         if (_isMovingToNextTile && agent.remainingDistance <= (agent.stoppingDistance + distanceThreshold) && !agent.pathPending)
@@ -223,5 +245,27 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     public void DestroyForTowerCollision()
     {
         Destroy(gameObject);
+    }
+
+    private void CheckForRoad()
+    {
+        if (!Physics.CheckSphere(transform.position, 0.5f, LayerMask.GetMask("Road")))
+        {
+            DestroyIfNotRoad();
+            return;
+        }
+    }
+
+    private void DestroyIfNotRoad()
+    {
+        if (isDestroyed) return;
+
+        isDestroyed = true;
+
+        ParticleSpawner.PlayParticleEffect(smokeParticle, transform.position);
+        transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+        {
+             Destroy(gameObject);
+        });
     }
 }

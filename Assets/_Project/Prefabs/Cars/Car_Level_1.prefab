@@ -192,6 +192,7 @@ MonoBehaviour:
   - {fileID: 0}
   distanceThreshold: 0.35
   randomPosRange: 3
+  smokeParticle: {fileID: 6280281539998945384, guid: 340757cd6f101994bb65c7747dcb497e, type: 3}
   team: 0
   isBlowUp: 0
 --- !u!195 &8801928783493637972
