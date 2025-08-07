@@ -7,48 +7,33 @@ public class BaseLevel : MonoBehaviour
     public int totalRoadTiles;
     public int TotalBuildings => allBuildings.Count;
     public List<BaseBuilding> allBuildings;
-
-    private List<UIProgressTeamHolder> teamHolders;
-    [SerializeField] private Transform teamHolderParent;
+    [SerializeField] private UIProgressParent teamHolderParent;
 
     void OnEnable()
     {
         EventManager.TriggerEvent(new EventManager.OnRoadCountChanged(totalRoadTiles));
 
         EventManager.RegisterEvent<EventManager.OnAnyBuildingCaptured>(OnAnyBuildingCaptured);
+        EventManager.RegisterEvent<EventManager.OnPlayerStartedToDrawRoad>(OnPlayerStartedToDrawRoad);
+        EventManager.RegisterEvent<EventManager.OnTimerForSpawnCompleted>(SpawnRandomBuildings);
 
-        // Initialize team holders
-        teamHolders = new List<UIProgressTeamHolder>();
-
-        int teamHolderCount = 0;
-
-        foreach (Transform child in teamHolderParent)
-        {
-            UIProgressTeamHolder holder = child.GetComponent<UIProgressTeamHolder>();
-            if (holder != null)
-            {
-                holder.team = allBuildings[teamHolderCount].team;
-                holder.SetImage(GetTeamColor(holder.team));
-                teamHolders.Add(holder);
-                teamHolderCount++;
-            }
-        }
+        List<BaseBuilding> activeBuildings = allBuildings.FindAll(b => b.gameObject.activeSelf);
+        teamHolderParent.SetHoldersForStart(activeBuildings.ConvertAll(b => b.team));
     }
 
     void Start()
     {
-        InvokeRepeating(nameof(SpawnRandomBuildings), 5f, 5);
         InvokeRepeating(nameof(DrawRandomRoadPath), 60f, 15f);
 
-        EventManager.RegisterEvent<EventManager.OnPlayerStartedToDrawRoad>(OnPlayerStartedToDrawRoad);
+        EventManager.TriggerEvent(new EventManager.OnAnyBuildingSpawned());
     }
 
     void OnDisable()
     {
-        CancelInvoke(nameof(SpawnRandomBuildings));
         CancelInvoke(nameof(DrawRandomRoadPath));
         EventManager.DeregisterEvent<EventManager.OnAnyBuildingCaptured>(OnAnyBuildingCaptured);
         EventManager.DeregisterEvent<EventManager.OnPlayerStartedToDrawRoad>(OnPlayerStartedToDrawRoad);
+        EventManager.DeregisterEvent<EventManager.OnTimerForSpawnCompleted>(SpawnRandomBuildings);
     }
 
     private void OnPlayerStartedToDrawRoad(EventManager.OnPlayerStartedToDrawRoad road)
@@ -58,7 +43,7 @@ public class BaseLevel : MonoBehaviour
         InvokeRepeating(nameof(DrawRandomRoadPath), 5f, 15f);
     }
 
-    private void SpawnRandomBuildings()
+    private void SpawnRandomBuildings(EventManager.OnTimerForSpawnCompleted completed)
     {
         var emptyAreas = RoadManager.Instance.FindAll3x3EmptyAreaCenters();
         if (emptyAreas != null && emptyAreas.Count > 0)
@@ -78,12 +63,17 @@ public class BaseLevel : MonoBehaviour
                 {
                     buildingToSpawn.transform.position = new Vector3(randomArea.x * 2, 0, randomArea.y * 2);
                     buildingToSpawn.gameObject.SetActive(true);
+
+                    completed.holder.OpenImage(buildingToSpawn.team);
+
+                    EventManager.TriggerEvent(new EventManager.OnAnyBuildingSpawned());
                 }
             }
         }
         else
         {
             Debug.LogError("No empty 3x3 area found.");
+            EventManager.TriggerEvent(new EventManager.OnTimerForSpawnCompleted(completed.holder));
         }
     }
 
@@ -108,18 +98,6 @@ public class BaseLevel : MonoBehaviour
 
     private void OnAnyBuildingCaptured(EventManager.OnAnyBuildingCaptured captured)
     {
-        // Update the UI images
-        foreach (var holder in teamHolders)
-        {
-            if (holder.team == captured.previousTeam)
-            {
-                holder.team = captured.newTeam;
-                holder.SetImage(GetTeamColor(captured.newTeam));
-                break;
-            }
-        }
-
-
         if (GetBlueTowerCount() >= TotalBuildings)
         {
             Debug.Log("All blue towers captured");
@@ -129,16 +107,6 @@ public class BaseLevel : MonoBehaviour
         {
             EventManager.TriggerEvent(new EventManager.OnLevelFailed());
         }
-    }
-
-    private Color GetTeamColor(Team team)
-    {
-        return team switch
-        {
-            Team.Blue => Color.blue,
-            Team.Red => Color.red,
-            _ => Color.gray,
-        };
     }
 
     private int GetBlueTowerCount()

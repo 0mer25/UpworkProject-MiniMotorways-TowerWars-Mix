@@ -96,7 +96,8 @@ public class LevelManager : MonoBehaviour
     {
         if (success)
         {
-            NextLevel();
+            //NextLevel();
+            ResetLevel();
         }
         else
         {

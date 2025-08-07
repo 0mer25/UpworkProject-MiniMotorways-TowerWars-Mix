@@ -143,6 +143,8 @@ public class SpawnerBuilding : BaseBuilding
 
     protected override void UpdateGfx(int newLevel)
     {
+        base.UpdateGfx(newLevel);
+        
         CloseAllConnectionPointVisuals();
         connectedPointVisuals.Clear();
 

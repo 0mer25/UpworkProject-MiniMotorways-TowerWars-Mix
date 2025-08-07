@@ -263,7 +263,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         isDestroyed = true;
 
         ParticleSpawner.PlayParticleEffect(smokeParticle, transform.position);
-        transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+        transform.DOScale(Vector3.zero, 0.15f).OnComplete(() =>
         {
              Destroy(gameObject);
         });

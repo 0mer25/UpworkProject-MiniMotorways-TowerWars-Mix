@@ -75,6 +75,8 @@ public class ShootingTower : BaseBuilding
 
     protected override void UpdateGfx(int newLevel)
     {
+        base.UpdateGfx(newLevel);
+        
         rangeGfx.localScale = new Vector3(Range * 2, Range * 2, 1);
         if (newLevel == 1)
         {

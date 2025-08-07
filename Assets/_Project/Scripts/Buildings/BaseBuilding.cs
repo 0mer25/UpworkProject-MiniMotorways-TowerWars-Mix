@@ -29,6 +29,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
     [SerializeField] protected List<GameObject> connectedPointVisuals;
     [SerializeField] protected List<GameObject> connectionPointsParents;
+    [SerializeField] protected List<Transform> textPositions;
 
     protected virtual void Awake()
     {
@@ -316,7 +317,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
         Team previousTeam = team;
         team = newTeam;
         SetMaterialToTeam();
-        
+
         EventManager.TriggerEvent(new EventManager.OnAnyBuildingCaptured(previousTeam, team));
     }
 
@@ -330,7 +331,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
             meshRenderer.materials = mats;
         }
     }
-    
+
     private void UpgradeBuilding()
     {
         level++;
@@ -355,5 +356,8 @@ public abstract class BaseBuilding : GridObj, IBuilding
         healthText.transform.DOShakeScale(0.2f, 0.1f, 10, 1);
     }
 
-    protected abstract void UpdateGfx(int newLevel);
+    protected virtual void UpdateGfx(int newLevel)
+    {
+        healthText.transform.parent.localPosition = textPositions[newLevel - 1].localPosition;
+    }
 }
