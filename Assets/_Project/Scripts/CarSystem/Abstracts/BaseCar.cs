@@ -8,13 +8,13 @@ using UnityEngine.AI;
 public abstract class BaseCar : MonoBehaviour, IDamagable
 {
     [SerializeField] protected CarStatSO carStats;
-    [SerializeField] private ParticleSystem blowUpParticlePrefab;
+    [SerializeField] private GameObject blowUpParticlePrefab;
     [SerializeField] private ParticleSystem flameParticle;
     [SerializeField] private MeshRenderer carMeshRenderer;
     [SerializeField] private List<Transform> crashPoints;
     [SerializeField] private float distanceThreshold = 0.1f;
     [SerializeField] private float randomPosRange = 3f;
-    [SerializeField] private ParticleSystem smokeParticle;
+    [SerializeField] private GameObject smokeParticle;
 
     public int Health { get => remainHealth; set => remainHealth = value; }
     public int Damage { get => carStats.health; }
@@ -122,7 +122,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
 
         if (blowUpParticlePrefab != null)
         {
-            ParticleSpawner.PlayParticleEffect(blowUpParticlePrefab, transform.position);
+            ParticleSpawner.Instance.PlayParticleEffect(blowUpParticlePrefab, transform.position);
         }
 
         if (flameParticle != null)
@@ -262,7 +262,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
 
         isDestroyed = true;
 
-        ParticleSpawner.PlayParticleEffect(smokeParticle, transform.position);
+        ParticleSpawner.Instance.PlayParticleEffect(smokeParticle, transform.position);
         transform.DOScale(Vector3.zero, 0.15f).OnComplete(() =>
         {
             DestroyTheCarToThePool();

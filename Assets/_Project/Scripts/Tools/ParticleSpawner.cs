@@ -1,12 +1,26 @@
+using System.Collections;
 using UnityEngine;
 
-public static class ParticleSpawner
+public class ParticleSpawner : MonoBehaviour
 {
+    public static ParticleSpawner Instance { get; private set; }
 
-    public static void PlayParticleEffect(ParticleSystem particlePrefab, Vector3 position)
+    void Awake()
     {
-        ParticleSystem particle = Object.Instantiate(particlePrefab, position, Quaternion.identity);
+        Instance = this;
+    }
+    
+    public void PlayParticleEffect(GameObject particlePrefab, Vector3 position)
+    {
+        ParticleSystem particle = PoolManager.Instance.Spawn(particlePrefab, position, Quaternion.identity).GetComponent<ParticleSystem>();
         particle.Play();
-        Object.Destroy(particle.gameObject, particle.main.duration);
+        StartCoroutine(DestroyParticleEffect(particle));
+    }
+
+    private IEnumerator DestroyParticleEffect(ParticleSystem particlePrefab)
+    {
+        yield return new WaitForSeconds(particlePrefab.main.duration);
+        particlePrefab.Stop();
+        PoolManager.Instance.Despawn(particlePrefab.gameObject);
     }
 }

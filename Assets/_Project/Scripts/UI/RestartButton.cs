@@ -19,7 +19,7 @@ public class RestartButton : MonoBehaviour
     private IEnumerator WaitForReload()
     {
         restartButton.interactable = false;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.2f);
         restartButton.interactable = true;
     }
 }

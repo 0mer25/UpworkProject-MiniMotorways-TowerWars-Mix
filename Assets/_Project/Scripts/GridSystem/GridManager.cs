@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
@@ -7,11 +8,6 @@ public class GridManager : MonoBehaviour
     public int height = 10;
     public float cellSize = 1f;
 
-    void Start()
-    {
-
-    }
-    
     [ContextMenu("Create Grids")]
     public void CreateGrid()
     {
@@ -24,6 +20,31 @@ public class GridManager : MonoBehaviour
 
                 GridTile cell = cellObj.GetComponent<GridTile>();
                 cell.GridPosition = new Vector2Int(x, y);
+            }
+        }
+    }
+
+    [ContextMenu("Set Grids")]
+    public void SetGrids()
+    {
+        List<Transform> gridTiles = new List<Transform>();
+
+        int index = 0;
+
+        foreach (Transform child in transform)
+        {
+            gridTiles.Add(child);
+        }
+
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Vector3 position = new Vector3(x * cellSize, 0, y * cellSize);
+
+                gridTiles[index].position = position;
+                index++;
             }
         }
     }
