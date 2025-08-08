@@ -23,7 +23,7 @@ public class BaseLevel : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating(nameof(DrawRandomRoadPath), 60f, 15f);
+        //InvokeRepeating(nameof(DrawRandomRoadPath), 60f, 15f);
 
         EventManager.TriggerEvent(new EventManager.OnAnyBuildingSpawned());
     }
@@ -38,9 +38,9 @@ public class BaseLevel : MonoBehaviour
 
     private void OnPlayerStartedToDrawRoad(EventManager.OnPlayerStartedToDrawRoad road)
     {
-        CancelInvoke(nameof(DrawRandomRoadPath));
+        /* CancelInvoke(nameof(DrawRandomRoadPath));
         
-        InvokeRepeating(nameof(DrawRandomRoadPath), 5f, 15f);
+        InvokeRepeating(nameof(DrawRandomRoadPath), 5f, 15f); */
     }
 
     private void SpawnRandomBuildings(EventManager.OnTimerForSpawnCompleted completed)
