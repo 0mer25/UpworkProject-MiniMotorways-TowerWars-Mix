@@ -61,7 +61,10 @@ public class SpawnerBuilding : BaseBuilding
     {
         var teamIndex = team == Team.Blue ? 0 : team == Team.Red ? 1 : 2;
         var spawnPrefab = spawnerData.GetCarPrefab(teamIndex);
-        var carGO = Instantiate(spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
+        //var carGO = Instantiate(spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
+
+        var carGO = PoolManager.Instance.Spawn(spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
+
         var car = carGO.GetComponent<BaseCar>();
         car.SpawnCar(this);
         car.Initialize(spawnTile, targetTile, team, 0, transform);

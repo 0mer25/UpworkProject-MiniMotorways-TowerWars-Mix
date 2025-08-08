@@ -2360,6 +2360,7 @@ Transform:
   - {fileID: 669507992}
   - {fileID: 1364358732}
   - {fileID: 787274058}
+  - {fileID: 1995892874}
   m_Father: {fileID: 228750354}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1765112868
@@ -2401,6 +2402,72 @@ RectTransform:
   m_AnchoredPosition: {x: 160, y: -400}
   m_SizeDelta: {x: 300, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1995892873
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1995892874}
+  - component: {fileID: 1995892875}
+  m_Layer: 0
+  m_Name: ObjectPoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1995892874
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995892873}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1698931971}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1995892875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1995892873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c59db662a677b054e87de56e2a44755c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialPools:
+  - prefab: {fileID: 8137885896484011762, guid: d384c35692ae25f45bdb4faaa0beca25, type: 3}
+    initialSize: 20
+    expandable: 1
+  - prefab: {fileID: 6927251474465227993, guid: 8a9b5b449ee10af4dbd6466c7750d05a, type: 3}
+    initialSize: 20
+    expandable: 1
+  - prefab: {fileID: 1793450325971375364, guid: ed7ba5a95a5a54a4db696d6539b24a02, type: 3}
+    initialSize: 20
+    expandable: 1
+  - prefab: {fileID: 5794193510943580713, guid: 332d195af9ef7624098ff725059d96f1, type: 3}
+    initialSize: 20
+    expandable: 1
+  - prefab: {fileID: 5921990077964771648, guid: 29a8595de76c55c49842eed14b05b3a9, type: 3}
+    initialSize: 20
+    expandable: 1
+  - prefab: {fileID: 9107599349280948009, guid: 33e3fc7f386ff7a42a3e157e793039cc, type: 3}
+    initialSize: 20
+    expandable: 1
+  - prefab: {fileID: 3077343761403282166, guid: 340757cd6f101994bb65c7747dcb497e, type: 3}
+    initialSize: 20
+    expandable: 1
 --- !u!1 &2027318387
 GameObject:
   m_ObjectHideFlags: 0

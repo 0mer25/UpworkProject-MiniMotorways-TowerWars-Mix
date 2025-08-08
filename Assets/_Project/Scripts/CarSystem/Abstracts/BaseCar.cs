@@ -162,7 +162,7 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         );
         rb.AddTorque(torque, ForceMode.Impulse);
 
-        Destroy(gameObject, 3f);
+        Invoke(nameof(DestroyTheCarToThePool), 3f);
     }
 
     private void Update()
@@ -265,7 +265,12 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         ParticleSpawner.PlayParticleEffect(smokeParticle, transform.position);
         transform.DOScale(Vector3.zero, 0.15f).OnComplete(() =>
         {
-             Destroy(gameObject);
+            DestroyTheCarToThePool();
         });
+    }
+
+    private void DestroyTheCarToThePool()
+    {
+        PoolManager.Instance.Despawn(gameObject);
     }
 }
