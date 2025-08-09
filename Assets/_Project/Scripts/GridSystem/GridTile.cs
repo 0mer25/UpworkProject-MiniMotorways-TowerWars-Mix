@@ -18,6 +18,7 @@ public class GridTile : MonoBehaviour
     private List<MeshRenderer> meshRenderers;
     public GameObject RoadObject => currentRoad;
     public bool canBeDeleted = true;
+    [SerializeField] private Material deleteMat;
 
     void Awake()
     {
@@ -85,8 +86,10 @@ public class GridTile : MonoBehaviour
         {
             foreach (var renderer in meshRenderers)
             {
-                renderer.material.color = Color.red; // Set the color to red to indicate deletion
-                renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0.5f); // Make it semi-transparent
+                /* renderer.material.color = Color.red; // Set the color to red to indicate deletion
+                renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0.5f); // Make it semi-transparent */
+
+                renderer.material = deleteMat; // Change the material to the delete material
             }
         }
     }

@@ -64,7 +64,7 @@ public class SpawnerBuilding : BaseBuilding
         //var carGO = Instantiate(spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
 
         var carGO = PoolManager.Instance.Spawn(spawnPrefab, spawnTile.Tile.transform.position, Quaternion.identity);
-
+        
         var car = carGO.GetComponent<BaseCar>();
         car.SpawnCar(this);
         car.Initialize(spawnTile, targetTile, team, 0, transform);

@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carStats: {fileID: 11400000, guid: 51454c5a3fe69c0498a04f7103b3ddcb, type: 2}
-  blowUpParticlePrefab: {fileID: 5444105318733727396, guid: cf82839c411151342a7b2337bda9fb34, type: 3}
+  blowUpParticlePrefab: {fileID: 5162910912013668194, guid: cf82839c411151342a7b2337bda9fb34, type: 3}
   flameParticle: {fileID: 1094423053515636951}
   carMeshRenderer: {fileID: 9161967271697686894}
   crashPoints:
@@ -192,7 +192,7 @@ MonoBehaviour:
   - {fileID: 0}
   distanceThreshold: 0.1
   randomPosRange: 3
-  smokeParticle: {fileID: 6280281539998945384, guid: 340757cd6f101994bb65c7747dcb497e, type: 3}
+  smokeParticle: {fileID: 3077343761403282166, guid: 340757cd6f101994bb65c7747dcb497e, type: 3}
   team: 1
   isBlowUp: 0
 --- !u!195 &3121156957574583442

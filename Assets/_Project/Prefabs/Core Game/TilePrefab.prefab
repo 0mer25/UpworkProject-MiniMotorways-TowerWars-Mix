@@ -163,6 +163,7 @@ MonoBehaviour:
   fourWayRoadPrefab: {fileID: 0}
   obstaclePrefab: {fileID: 0}
   canBeDeleted: 1
+  deleteMat: {fileID: 2100000, guid: 475f47b6628bf404fb76901acf85e0e1, type: 2}
 --- !u!1 &3731524370634135590
 GameObject:
   m_ObjectHideFlags: 0

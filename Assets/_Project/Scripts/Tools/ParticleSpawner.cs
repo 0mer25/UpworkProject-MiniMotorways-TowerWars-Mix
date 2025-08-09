@@ -12,15 +12,16 @@ public class ParticleSpawner : MonoBehaviour
     
     public void PlayParticleEffect(GameObject particlePrefab, Vector3 position)
     {
-        ParticleSystem particle = PoolManager.Instance.Spawn(particlePrefab, position, Quaternion.identity).GetComponent<ParticleSystem>();
-        particle.Play();
+        GameObject particle = PoolManager.Instance.Spawn(particlePrefab, position, Quaternion.identity);
+
+        particle.GetComponent<ParticleSystem>().Play();
         StartCoroutine(DestroyParticleEffect(particle));
     }
 
-    private IEnumerator DestroyParticleEffect(ParticleSystem particlePrefab)
+    private IEnumerator DestroyParticleEffect(GameObject particle)
     {
-        yield return new WaitForSeconds(particlePrefab.main.duration);
-        particlePrefab.Stop();
-        PoolManager.Instance.Despawn(particlePrefab.gameObject);
+        yield return new WaitForSeconds(particle.GetComponent<ParticleSystem>().main.duration);
+        particle.GetComponent<ParticleSystem>().Stop();
+        PoolManager.Instance.Despawn(particle);
     }
 }

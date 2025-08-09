@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CarHolder_Level_2
   m_EditorClassIdentifier: 
   blueCarPrefab: {fileID: 6927251474465227993, guid: 8a9b5b449ee10af4dbd6466c7750d05a, type: 3}
-  redCarPrefab: {fileID: 5921990077964771648, guid: 29a8595de76c55c49842eed14b05b3a9, type: 3}
+  redCarPrefab: {fileID: 5921990077964771648, guid: cfb0e75f3de511148977fc31a009bb3a, type: 3}
