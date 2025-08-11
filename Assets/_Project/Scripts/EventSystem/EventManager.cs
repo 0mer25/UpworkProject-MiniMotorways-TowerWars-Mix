@@ -98,6 +98,20 @@ public static class EventManager
     }
 
 
+    public struct OnAnyRoadButtonPressed : IEventType
+    {
+        public bool willDeleteButtonPressed;
+        public OnAnyRoadButtonPressed(bool willDeleteButtonPressed)
+        {
+            this.willDeleteButtonPressed = willDeleteButtonPressed;
+        }
+    }
+
+
+
+
+
+
 
 
     private static Dictionary<Type, Delegate> eventList = new();

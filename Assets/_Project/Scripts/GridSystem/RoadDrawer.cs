@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ public class RoadDrawer : MonoBehaviour
     private bool isDeleting = false;
     private bool waitForNextTile = false;
 
+    private bool isDrawingRoad = true;
+
     private bool isPlayerStartedToDrawRoad = false;
 
     private List<GridTile> willDeleteTiles = new List<GridTile>();
@@ -19,10 +22,26 @@ public class RoadDrawer : MonoBehaviour
     void OnEnable()
     {
         EventManager.RegisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
+
+        EventManager.RegisterEvent<EventManager.OnAnyRoadButtonPressed>(OnAnyRoadButtonPressed);
     }
+
     void OnDisable()
     {
         EventManager.DeregisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
+        EventManager.DeregisterEvent<EventManager.OnAnyRoadButtonPressed>(OnAnyRoadButtonPressed);
+    }
+
+    private void OnAnyRoadButtonPressed(EventManager.OnAnyRoadButtonPressed pressed)
+    {
+        if (pressed.willDeleteButtonPressed)
+        {
+            isDrawingRoad = false;
+        }
+        else
+        {
+            isDrawingRoad = true;
+        }
     }
 
     private void OnLevelLoading(EventManager.OnLevelLoading loaded)
@@ -49,17 +68,30 @@ public class RoadDrawer : MonoBehaviour
 
                 if (!tile.HasRoad && !tile.IsConnectionTile)
                 {
-                    isDeleting = true;
+                    /* isDeleting = true; */
                     return;
                 }
 
-                isDrawing = true;
+                /* isDrawing = true; */
 
-                if(!isPlayerStartedToDrawRoad)
+                if (isDrawingRoad)
                 {
-                    isPlayerStartedToDrawRoad = true;
-                    EventManager.TriggerEvent(new EventManager.OnPlayerStartedToDrawRoad());
+                    isDrawing = true;
+                    isDeleting = false;
                 }
+                else
+                {
+                    isDrawing = false;
+                    isDeleting = true;
+                }
+
+
+
+                if (!isPlayerStartedToDrawRoad)
+                    {
+                        isPlayerStartedToDrawRoad = true;
+                        EventManager.TriggerEvent(new EventManager.OnPlayerStartedToDrawRoad());
+                    }
             }
             else
             {
@@ -82,9 +114,10 @@ public class RoadDrawer : MonoBehaviour
             }
         }
 
+        if (!Input.GetMouseButton(0)) return;
 
 
-        if (isDrawing && RoadCountManager.Instance.CanPlaceRoad())
+        if (isDrawing && RoadCountManager.Instance.CanPlaceRoad() && isDrawingRoad)
         {
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
@@ -119,7 +152,7 @@ public class RoadDrawer : MonoBehaviour
             }
         }
 
-        if (isDeleting)
+        if (isDeleting && !isDrawingRoad)
         {
             Vector3 screenPos = Input.mousePosition;
             Ray ray = cam.ScreenPointToRay(screenPos);
