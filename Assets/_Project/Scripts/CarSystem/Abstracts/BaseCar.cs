@@ -113,11 +113,6 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         if (agent != null)
         {
             agent.enabled = true;
-
-            if (agent.isActiveAndEnabled)
-            {
-                agent.isStopped = false;
-            }
         }
 
         rb.isKinematic = true;
@@ -165,7 +160,6 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
 
         if (agent != null)
         {
-            agent.isStopped = true;
             agent.enabled = false;
         }
 
