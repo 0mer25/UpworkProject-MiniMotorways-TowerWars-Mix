@@ -42,6 +42,12 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     protected bool canDuplicate = true;
     private bool checkForRoad = false;
     private bool isDestroyed = false;
+    private Rigidbody rb;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     void OnEnable()
     {
@@ -92,6 +98,33 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
     {
         agent = GetComponent<NavMeshAgent>();
         spawner = spawnerBuilding;
+
+
+        // Reset
+        remainHealth = carStats.health;
+        isBlowUp = false;
+        GetComponent<Collider>().isTrigger = true;
+
+        if (flameParticle != null && flameParticle.isPlaying)
+        {
+            flameParticle.Stop();
+        }
+
+        if (agent != null)
+        {
+            agent.enabled = true;
+
+            if (agent.isActiveAndEnabled)
+            {
+                agent.isStopped = false;
+            }
+        }
+
+        rb.isKinematic = true;
+        rb.useGravity = false;
+        rb.interpolation = RigidbodyInterpolation.None;
+
+        gameObject.layer = LayerMask.NameToLayer("Car");
     }
 
     public virtual void Initialize(RoadTile startTile, RoadTile target, Team team, int startTileIndex = 0, Transform levelParent = null)
@@ -134,12 +167,6 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         {
             agent.isStopped = true;
             agent.enabled = false;
-        }
-
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb == null)
-        {
-            rb = gameObject.AddComponent<Rigidbody>();
         }
 
         rb.isKinematic = false;
