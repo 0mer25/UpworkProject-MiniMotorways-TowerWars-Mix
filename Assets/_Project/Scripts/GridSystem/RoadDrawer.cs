@@ -20,6 +20,11 @@ public class RoadDrawer : MonoBehaviour
     private List<GridTile> willDeleteTiles = new List<GridTile>();
     [SerializeField] private GameObject deletionOutlineObject;
 
+    void Start()
+    {
+        deletionOutlineObject.SetActive(false);
+    }
+
     void OnEnable()
     {
         EventManager.RegisterEvent<EventManager.OnLevelLoading>(OnLevelLoading);
