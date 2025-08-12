@@ -18,6 +18,7 @@ public class RoadDrawer : MonoBehaviour
     private bool isPlayerStartedToDrawRoad = false;
 
     private List<GridTile> willDeleteTiles = new List<GridTile>();
+    [SerializeField] private GameObject deletionOutlineObject;
 
     void OnEnable()
     {
@@ -37,10 +38,12 @@ public class RoadDrawer : MonoBehaviour
         if (pressed.willDeleteButtonPressed)
         {
             isDrawingRoad = false;
+            deletionOutlineObject.SetActive(true);
         }
         else
         {
             isDrawingRoad = true;
+            deletionOutlineObject.SetActive(false);
         }
     }
 
