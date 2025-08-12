@@ -129,11 +129,18 @@ public class RoadDrawer : MonoBehaviour
             {
                 GridTile currentTile = hit.collider.GetComponent<GridTile>();
 
-                if (currentTile && currentTile.IsObstacle)
+                // Check for 4 nearby tiles if there is road there
+                if (!currentTile.IsThereRoadNearby() && !currentTile.IsConnectionTile)
                 {
                     isDrawing = false;
                     return;
                 }
+
+                if (currentTile && currentTile.IsObstacle)
+                    {
+                        isDrawing = false;
+                        return;
+                    }
 
                 if (currentTile.MapRoad == null)
                 {

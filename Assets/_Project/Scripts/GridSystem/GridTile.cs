@@ -181,6 +181,38 @@ public class GridTile : MonoBehaviour
         return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
     }
 
+
+    public bool IsThereRoadNearby()
+    {
+        List<Vector2Int> connectedDirections = new List<Vector2Int>();
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
+        foreach (var dir in directions)
+        {
+            Vector2Int neighborPos = GridPosition + dir;
+            if (GridTileRegistry.Instance.TryGetTileAt(neighborPos, out GridTile neighborTile))
+            {
+                if (neighborTile.HasRoad)
+                {
+                    connectedDirections.Add(dir);
+                }
+            }
+        }
+
+        if (connectedDirections.Count > 0)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+
     private Quaternion GetCornerRotation(Vector2Int from, Vector2Int to)
     {
         from = ClampDirection(from);
