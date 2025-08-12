@@ -55,10 +55,10 @@ public class GridTile : MonoBehaviour
 
         meshRenderers = currentRoad.GetComponentsInChildren<MeshRenderer>().ToList();
 
-        if(!canBeDeleted)
+        /* if(!canBeDeleted)
         {
             SetForAIDrawing();
-        }
+        } */
 
         EventManager.TriggerEvent(new EventManager.OnRoadPlaced(this));
     }
@@ -86,9 +86,6 @@ public class GridTile : MonoBehaviour
         {
             foreach (var renderer in meshRenderers)
             {
-                /* renderer.material.color = Color.red; // Set the color to red to indicate deletion
-                renderer.material.color = new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b, 0.5f); // Make it semi-transparent */
-
                 renderer.material = deleteMat; // Change the material to the delete material
             }
         }
