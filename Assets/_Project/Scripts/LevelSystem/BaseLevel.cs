@@ -72,7 +72,6 @@ public class BaseLevel : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No empty 3x3 area found.");
             EventManager.TriggerEvent(new EventManager.OnTimerForSpawnCompleted(completed.holder));
         }
     }
@@ -100,7 +99,6 @@ public class BaseLevel : MonoBehaviour
     {
         if (GetBlueTowerCount() >= TotalBuildings)
         {
-            Debug.Log("All blue towers captured");
             EventManager.TriggerEvent(new EventManager.OnLevelCompleted());
         }
         else if (GetBlueTowerCount() <= 0)

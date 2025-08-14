@@ -816,7 +816,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5418925998984638739}
-  - component: {fileID: 2813442315094878859}
   m_Layer: 2
   m_Name: LevelTextParent
   m_TagString: Untagged
@@ -840,18 +839,6 @@ Transform:
   - {fileID: 3360488525847261679}
   m_Father: {fileID: 7570076969284908503}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2813442315094878859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2546985512323861440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d77f22edefed3b47afec285be09c582, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2986443470520430179
 GameObject:
   m_ObjectHideFlags: 0

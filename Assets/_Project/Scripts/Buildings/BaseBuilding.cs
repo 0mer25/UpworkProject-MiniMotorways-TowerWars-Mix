@@ -65,7 +65,6 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
         if (_centerGridRoad == null)
         {
-            Debug.LogWarning("Center road tile not set.");
             return;
         }
 
@@ -107,10 +106,6 @@ public abstract class BaseBuilding : GridObj, IBuilding
             tile.BaseBuildingObj = this;
             _connectionTiles.Add(tile);
         }
-        else
-        {
-            Debug.Log($"Connection point not found or not a road at {pos}");
-        }
     }
 
     private void TryAddBuildingEdgeTile(Vector2Int pos)
@@ -120,10 +115,6 @@ public abstract class BaseBuilding : GridObj, IBuilding
         if (tile != null)
         {
             SetTile(tile);
-        }
-        else
-        {
-            Debug.Log($"Connection point not found or not a road at {pos}");
         }
     }
 
@@ -148,7 +139,6 @@ public abstract class BaseBuilding : GridObj, IBuilding
 
         if (centerGridTile == null)
         {
-            Debug.LogWarning("No GridTile found near the building position.");
             return;
         }
 
@@ -174,10 +164,6 @@ public abstract class BaseBuilding : GridObj, IBuilding
                 if (tile != null)
                 {
                     occupiedTiles.Add(tile);
-                }
-                else
-                {
-                    Debug.LogWarning($"Missing RoadTile at position {pos}");
                 }
             }
         }

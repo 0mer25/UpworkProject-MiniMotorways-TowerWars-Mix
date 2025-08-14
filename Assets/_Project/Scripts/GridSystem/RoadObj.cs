@@ -33,26 +33,21 @@ public class RoadObj : GridObj
         t.DOKill();
         _spawnSeq?.Kill();
 
-        // hedef (zemin) pozisyonu mevcut pozisyonun
         Vector3 targetPos  = t.position;
         Quaternion targetRot = t.rotation;
 
-        // biraz yukarıda ve minik tilt ile başlat
         t.position = targetPos + Vector3.up * dropHeight;
 
-        _spawnSeq = DOTween.Sequence().SetLink(gameObject); // obje disable/destroy olunca otomatik kill
+        _spawnSeq = DOTween.Sequence().SetLink(gameObject);
 
-        // düşüş
         _spawnSeq.Append(t.DOMoveY(targetPos.y, dropDuration).SetEase(dropEase));
 
-        // yere değince hafif "squash" (isteğe bağlı)
         if (squash)
         {
-            _spawnSeq.Join(t.DOScaleY(0.9f, dropDuration * 0.5f)); // inerken biraz bas
-            _spawnSeq.Append(t.DOScaleY(1f, 0.12f));               // sonra toparla
+            _spawnSeq.Join(t.DOScaleY(0.9f, dropDuration * 0.5f));
+            _spawnSeq.Append(t.DOScaleY(1f, 0.12f));
         }
 
-        // tilt'i geri düzelt
         _spawnSeq.Join(t.DORotateQuaternion(targetRot, dropDuration * 0.9f));
     }
 }

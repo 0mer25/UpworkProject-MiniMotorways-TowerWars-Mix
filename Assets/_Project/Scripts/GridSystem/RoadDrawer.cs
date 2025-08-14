@@ -76,11 +76,8 @@ public class RoadDrawer : MonoBehaviour
 
                 if (!tile.HasRoad && !tile.IsConnectionTile)
                 {
-                    /* isDeleting = true; */
                     return;
                 }
-
-                /* isDrawing = true; */
 
                 if (isDrawingRoad)
                 {
@@ -135,7 +132,7 @@ public class RoadDrawer : MonoBehaviour
                 GridTile currentTile = hit.collider.GetComponent<GridTile>();
 
                 // Check for 4 nearby tiles if there is road there
-                if (!currentTile.IsThereRoadNearby() && !currentTile.IsConnectionTile)
+                if (!currentTile.IsThereRoadNearby() && !currentTile.IsConnectionTile && !currentTile.HasRoad)
                 {
                     isDrawing = false;
                     return;

@@ -231,7 +231,6 @@ public abstract class BaseCar : MonoBehaviour, IDamagable
         if (_roadMap == null || _currentTile >= _roadMap.Count)
         {
             _isMovementStarted = false;
-            Debug.Log("Destination reached.");
             return;
         }
 

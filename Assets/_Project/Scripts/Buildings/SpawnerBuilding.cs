@@ -42,11 +42,6 @@ public class SpawnerBuilding : BaseBuilding
         {
             if (connectionTile.State == GridObjType.Road)
             {
-                for (int x = 7; x <= 15; x++)
-                {
-                    var tile = RoadManager.Instance.GetTileByGridPosition(new Vector2Int(x, 14));
-                }
-
                 var target = TryFindTarget(connectionTile);
                 if (target != null)
                 {

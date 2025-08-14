@@ -139,7 +139,6 @@ public class GridTile : MonoBehaviour
                 Vector2Int dirA = connectedDirections[0];
                 Vector2Int dirB = connectedDirections[1];
 
-                // Eğer düz değilse, viraj demektir (örnek: up+right)
                 if (dirA != -dirB)
                 {
                     ReplaceWithCornerRoad(GetCornerRotation(dirA, dirB));
