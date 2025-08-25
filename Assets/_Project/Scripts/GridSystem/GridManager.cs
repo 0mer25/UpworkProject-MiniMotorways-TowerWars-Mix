@@ -7,6 +7,7 @@ public class GridManager : MonoBehaviour
     public int width = 10;
     public int height = 10;
     public float cellSize = 1f;
+    [SerializeField] private Vector2 startPointForMatrix;
 
     [ContextMenu("Create Grids")]
     public void CreateGrid()
@@ -18,8 +19,8 @@ public class GridManager : MonoBehaviour
                 Vector3 position = new Vector3(x * cellSize, 0, y * cellSize);
                 GameObject cellObj = Instantiate(cellPrefab, position, Quaternion.identity, transform);
 
-                GridTile cell = cellObj.GetComponent<GridTile>();
-                cell.GridPosition = new Vector2Int(x, y);
+                /* GridTile cell = cellObj.GetComponent<GridTile>();
+                cell.GridPosition = new Vector2Int(x, y); */
             }
         }
     }
@@ -36,13 +37,14 @@ public class GridManager : MonoBehaviour
             gridTiles.Add(child);
         }
 
+        Debug.Log(gridTiles.Count);
+
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                Vector3 position = new Vector3(x * cellSize, 0, y * cellSize);
-
+                Vector3 position = new Vector3(x * cellSize, 0, y * cellSize) + (Vector3)startPointForMatrix;
                 gridTiles[index].position = position;
                 index++;
             }
