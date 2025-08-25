@@ -43,6 +43,8 @@ public abstract class BaseBuilding : GridObj, IBuilding
         }
 
         defaultMaterial = meshRenderers[0].materials[0];
+
+        originalHealthTextScale = healthText.transform.localScale;
     }
 
     void Start()
@@ -334,12 +336,20 @@ public abstract class BaseBuilding : GridObj, IBuilding
         UpdateGfx(level);
     }
 
+    private Tween healthTextTween;
+    private Vector3 originalHealthTextScale;
     private void UpdateHealthText()
     {
         healthText.text = health.ToString();
         healthText.transform.GetChild(0).GetComponent<TextMeshPro>().text = health.ToString();
 
-        healthText.transform.DOShakeScale(0.2f, 0.1f, 10, 1);
+        if (healthTextTween != null && healthTextTween.IsActive())
+        {
+            healthTextTween.Kill();
+            healthText.transform.localScale = originalHealthTextScale;
+        }
+
+        healthTextTween = healthText.transform.DOShakeScale(0.2f, 0.1f, 10, 1, true);
     }
 
     protected virtual void UpdateGfx(int newLevel)
