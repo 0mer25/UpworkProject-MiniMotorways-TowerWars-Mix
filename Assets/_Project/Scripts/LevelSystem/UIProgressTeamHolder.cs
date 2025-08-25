@@ -46,6 +46,7 @@ public class UIProgressTeamHolder : MonoBehaviour
     {
         if (buildingImage != null)
         {
+            this.team = team;
             buildingImage.color = GetTeamColor(team);
         }
     }

@@ -306,6 +306,7 @@ public abstract class BaseBuilding : GridObj, IBuilding
         team = newTeam;
         SetMaterialToTeam();
 
+        Debug.Log("Building team changed from " + previousTeam + " to " + team);
         EventManager.TriggerEvent(new EventManager.OnAnyBuildingCaptured(previousTeam, team));
     }
 
