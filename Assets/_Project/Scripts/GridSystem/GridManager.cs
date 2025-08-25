@@ -7,7 +7,7 @@ public class GridManager : MonoBehaviour
     public int width = 10;
     public int height = 10;
     public float cellSize = 1f;
-    [SerializeField] private Vector2 startPointForMatrix;
+    [SerializeField] private Vector3 startPointForMatrix;
 
     [ContextMenu("Create Grids")]
     public void CreateGrid()
@@ -44,7 +44,7 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                Vector3 position = new Vector3(x * cellSize, 0, y * cellSize) + (Vector3)startPointForMatrix;
+                Vector3 position = new Vector3(x * cellSize, 0, y * cellSize) + startPointForMatrix;
                 gridTiles[index].position = position;
                 index++;
             }
