@@ -19,8 +19,8 @@ public class GridManager : MonoBehaviour
                 Vector3 position = new Vector3(x * cellSize, 0, y * cellSize);
                 GameObject cellObj = Instantiate(cellPrefab, position, Quaternion.identity, transform);
 
-                /* GridTile cell = cellObj.GetComponent<GridTile>();
-                cell.GridPosition = new Vector2Int(x, y); */
+                GridTile cell = cellObj.GetComponent<GridTile>();
+                cell.GridPosition = new Vector2Int(x, y);
             }
         }
     }

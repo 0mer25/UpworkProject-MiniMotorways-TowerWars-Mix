@@ -158,12 +158,12 @@ MonoBehaviour:
   GridPosition: {x: 0, y: 0}
   currentRoad: {fileID: 0}
   straightRoadPrefab: {fileID: 5508535387871675358, guid: d5eb9e574973b0e42b5a1c87320f8b9b, type: 3}
-  cornerRoadPrefab: {fileID: 0}
-  threeWayRoadPrefab: {fileID: 0}
-  fourWayRoadPrefab: {fileID: 0}
+  cornerRoadPrefab: {fileID: 6162250554629209921, guid: 755085d84ede13d4d89eafb11019b768, type: 3}
+  threeWayRoadPrefab: {fileID: 5508535387871675358, guid: 384c74f2bbfc55d479cfbd136bc3b043, type: 3}
+  fourWayRoadPrefab: {fileID: 5508535387871675358, guid: 150ecfa6f6248054282aee991d19e9c2, type: 3}
   obstaclePrefab: {fileID: 0}
   canBeDeleted: 1
-  deleteMat: {fileID: 2100000, guid: 475f47b6628bf404fb76901acf85e0e1, type: 2}
+  deleteMat: {fileID: 0}
 --- !u!1 &3731524370634135590
 GameObject:
   m_ObjectHideFlags: 0
